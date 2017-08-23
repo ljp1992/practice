@@ -1,0 +1,29 @@
+<odoo>
+  <data>
+    <menuitem name="采购" id="po_root_menu" sequence="1"/>
+      <menuitem name="采购" id="po_top_menu" parent="po_root_menu" sequence="1"/>
+        <menuitem name="采购单" id="po_menu" parent="po_top_menu" action="purchase_order_act" sequence="1"/>
+
+  <menuitem name="销售" id="so_root_menu" sequence="2"/>
+      <menuitem name="销售" id="so_top_menu" parent="so_root_menu" sequence="1"/>
+        <menuitem name="客户跟进记录" id="customer_follow_record_menu" parent="so_top_menu" action="customer_follow_record_act" sequence="1"/>
+        <menuitem name="销售单" id="so_menu" parent="so_top_menu" action="sale_order_act" sequence="2"/>
+
+    <menuitem name="基础资料" id="base_menu" sequence="3"/>
+    <menuitem name="客户信息" id="customer_top_menu" parent="base_menu"  sequence="1"/>
+        <menuitem name="客户资料" id="customer_menu" parent="customer_top_menu" action="customer_act" sequence="1"/>
+        <menuitem name="客户子信息" id="customer_subinfo_menu" parent="customer_top_menu"  sequence="2"/>
+            <menuitem name="联系人" id="customer_contact_person_menu" parent="customer_subinfo_menu" action="customer_contact_person_act" sequence="1"/>
+            <menuitem name="客户等级" id="customer_grade_menu" parent="customer_subinfo_menu" action="customer_grade_act" sequence="2"/>
+            <menuitem name="客户来源" id="customer_origin_menu" parent="customer_subinfo_menu" action="customer_origin_act" sequence="3"/>
+            <menuitem name="客户类型" id="customer_category_menu" parent="customer_subinfo_menu" action="customer_category_act" sequence="4"/>
+
+    <menuitem name="供应商信息" id="supplier_top_menu" parent="base_menu" sequence="2"/>
+      <menuitem name="供应商资料" id="supplier_menu" parent="supplier_top_menu" action="supplier_act" sequence="1"/>
+    <menuitem name="产品信息" id="product_top_menu" parent="base_menu"  sequence="3"/>
+        <menuitem name="产品" id="product_menu" parent="product_top_menu" action="product_act" sequence="1"/>
+    <menuitem name="其他信息" id="other_top_menu" parent="base_menu"  sequence="4"/>
+        <menuitem name="国家" id="country_menu" parent="other_top_menu" action="country_act" sequence="1"/>
+        <menuitem name="职位" id="position_menu" parent="other_top_menu" action="position_act" sequence="2"/>
+  </data>
+</odoo>

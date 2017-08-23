@@ -1,0 +1,100 @@
+<odoo>
+  <data>
+    <!-- customer tree -->
+    <record model="ir.ui.view" id="customer_tree">
+      <field name="name">customer_tree</field>
+      <field name="model">customer</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="website"/>
+          <field name="country_id"/>
+          <field name="note"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- customer form -->
+    <record id="customer_form" model="ir.ui.view">
+        <field name="name">customer_form</field>
+        <field name="model">customer</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button string="客户跟踪记录" class="oe_stat_button" type="object"
+                                name="view_customer_follow_record" icon="fa-tasks"/>
+                    </div>
+
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="name" string="公司名称"/>
+                        <h1>
+                            <field name="name" placeholder="公司名称"/>
+                        </h1>
+                    </div>
+
+                  <group>
+                    <group>
+                      <!--<field name="name"/>-->
+                      <field name="country_id"/>
+                      <field name="address"/>
+                      <field name="website"/>
+                    </group>
+                    <group>
+                      <field name="grade_id"/>
+                      <field name="origin_id"/>
+                      <field name="category_id"/>
+                      <field name="develop_time"/>
+                      <field name="last_contact_time"/>
+                    </group>
+                    <field name="note"/>
+                  </group>
+                  <notebook>
+                    <page string="联系人">
+                      <field name="contact_ids">
+                        <tree>
+                          <field name="name"/>
+                          <field name="email"/>
+                          <field name="phone"/>
+                          <field name="cellphone"/>
+                          <field name="chuanzhen"/>
+                        </tree>
+                      </field>
+                    </page>
+                    <page string="意向产品">
+                      <field name="product_ids">
+                        <tree>
+                          <field name="name"/>
+                        </tree>
+                      </field>
+                    </page>
+                  </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--customer search-->
+    <record id="customer_search" model="ir.ui.view">
+        <field name="name">customer_search</field>
+        <field name="model">customer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="grade_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!--customer action-->
+    <record id="customer_act" model="ir.actions.act_window">
+        <field name="name">客户资料</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">customer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+  </data>
+</odoo>

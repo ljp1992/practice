@@ -1,0 +1,53 @@
+<odoo>
+  <data>
+    <!-- 职位 tree -->
+    <record model="ir.ui.view" id="position_tree">
+      <field name="name">position_tree</field>
+      <field name="model">position</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 职位 form -->
+    <record id="position_form" model="ir.ui.view">
+        <field name="name">position_form</field>
+        <field name="model">position</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                  <group>
+                    <group>
+                      <field name="name"/>
+                    </group>
+                    <field name="note"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--职位 search-->
+    <record id="position_search" model="ir.ui.view">
+        <field name="name">position_search</field>
+        <field name="model">position</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!--职位 action-->
+    <record id="position_act" model="ir.actions.act_window">
+        <field name="name">职位</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">position</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+  </data>
+</odoo>

@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+    <!-- 产品 tree -->
+    <record model="ir.ui.view" id="product_tree">
+      <field name="name">product_tree</field>
+      <field name="model">product</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 产品 form -->
+    <record id="product_form" model="ir.ui.view">
+        <field name="name">product_form</field>
+        <field name="model">product</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--产品 search-->
+    <record id="product_search" model="ir.ui.view">
+        <field name="name">product_search</field>
+        <field name="model">product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!--产品 action-->
+    <record id="product_act" model="ir.actions.act_window">
+        <field name="name">产品</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+  </data>
+</odoo>

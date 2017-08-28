@@ -1,0 +1,73 @@
+<odoo>
+  <data>
+    <!-- 需要联系的客户 tree -->
+    <record model="ir.ui.view" id="contact_customer_tree">
+      <field name="name">contact_customer_tree</field>
+      <field name="model">contact.customer</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="order_id"/>
+          <field name="customer_id"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 需要联系的客户 form -->
+    <record id="contact_customer_form" model="ir.ui.view">
+        <field name="name">contact_customer_form</field>
+        <field name="model">contact.customer</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <header>
+                    <button type="object" name="contact_done" string="已联系" states="to_do" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="to_do,done"/>
+                </header>
+                <sheet>
+                  <group>
+                    <group>
+                      <field name="order_id"/>
+                      <field name="customer_id"/>
+                    </group>
+                    <group>
+                    </group>
+                    <field name="note"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--需要联系的客户 search-->
+    <record id="contact_customer_search" model="ir.ui.view">
+        <field name="name">contact_customer_search</field>
+        <field name="model">contact.customer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="order_id"/>
+                <field name="customer_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!--需要联系的客户 action-->
+    <record id="contact_customer_act" model="ir.actions.act_window">
+        <field name="name">需要联系的客户</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">contact.customer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','=','to_do')]</field>
+    </record>
+
+    <!--已联系的客户 action-->
+      <record id="contact_customer_done_act" model="ir.actions.act_window">
+        <field name="name">已联系的客户</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">contact.customer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','=','done')]</field>
+    </record>
+  </data>
+</odoo>

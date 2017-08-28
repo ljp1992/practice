@@ -9,7 +9,9 @@
           <field name="name"/>
           <field name="website"/>
           <field name="country_id"/>
-          <field name="note"/>
+            <field name="del_days"/>
+          <field name="last_contact_time"/>
+            <field name="develop_person"/>
         </tree>
       </field>
     </record>
@@ -22,8 +24,10 @@
             <form string="">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button string="客户跟踪记录" class="oe_stat_button" type="object"
-                                name="view_customer_follow_record" icon="fa-tasks"/>
+                        <button class="oe_stat_button" type="object" name="view_sale_order" icon="fa-tasks">
+                            <field name="so_qty" widget="statinfo" string="销售订单" modifiers="{'readonly': true}"/>
+                        </button>
+                        <button string="客户跟踪记录" class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-tasks"/>
                     </div>
 
                     <div class="oe_title">
@@ -31,14 +35,22 @@
                         <h1>
                             <field name="name" placeholder="公司名称"/>
                         </h1>
+                        <group>
+                            <field name="customer_state"/>
+                        </group>
                     </div>
 
                   <group>
+                      <!--<group col="4" class="o_label_nowrap">-->
+                            <!--<separator colspan="4" string="其他"/>-->
+                            <!--<field name="product_ids"/>-->
+                        <!--</group>-->
                     <group>
-                      <!--<field name="name"/>-->
                       <field name="country_id"/>
                       <field name="address"/>
                       <field name="website"/>
+                        <field name="develop_person"/>
+                        <!--<field name="del_days"/>-->
                     </group>
                     <group>
                       <field name="grade_id"/>
@@ -61,10 +73,161 @@
                         </tree>
                       </field>
                     </page>
-                    <page string="意向产品">
-                      <field name="product_ids">
+                    <!--<page string="意向产品">-->
+                      <!--<field name="product_ids">-->
+                        <!--<tree>-->
+                          <!--<field name="name"/>-->
+                        <!--</tree>-->
+                      <!--</field>-->
+                    <!--</page>-->
+                  </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--<record id="customer_form" model="ir.ui.view">-->
+        <!--<field name="name">customer_form</field>-->
+        <!--<field name="model">customer</field>-->
+        <!--<field name="arch" type="xml">-->
+            <!--<form string="">-->
+                <!--<sheet>-->
+                    <!--<div class="oe_button_box" name="button_box">-->
+                        <!--<button class="oe_stat_button" type="object" name="view_sale_order" icon="fa-tasks">-->
+                            <!--<field name="so_qty" widget="statinfo" string="销售订单" modifiers="{'readonly': true}"/>-->
+                        <!--</button>-->
+                        <!--<button string="客户跟踪记录" class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-tasks"/>-->
+                    <!--</div>-->
+
+                    <!--<div class="oe_title">-->
+                        <!--<label class="oe_edit_only" for="name" string="公司名称"/>-->
+                        <!--<h1>-->
+                            <!--<field name="name" placeholder="公司名称"/>-->
+                        <!--</h1>-->
+                        <!--<group>-->
+                            <!--<field name="customer_state"/>-->
+                        <!--</group>-->
+                    <!--</div>-->
+
+                  <!--<group>-->
+                      <!--&lt;!&ndash;<group col="4" class="o_label_nowrap">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<separator colspan="4" string="其他"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<field name="product_ids"/>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</group>&ndash;&gt;-->
+                    <!--<group>-->
+                      <!--<field name="country_id"/>-->
+                      <!--<field name="address"/>-->
+                      <!--<field name="website"/>-->
+                        <!--<field name="develop_person"/>-->
+                        <!--&lt;!&ndash;<field name="del_days"/>&ndash;&gt;-->
+                    <!--</group>-->
+                    <!--<group>-->
+                      <!--<field name="grade_id"/>-->
+                      <!--<field name="origin_id"/>-->
+                      <!--<field name="category_id"/>-->
+                      <!--<field name="develop_time"/>-->
+                      <!--<field name="last_contact_time"/>-->
+                        <!--&lt;!&ndash;<label for="last_contact_time"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div >&ndash;&gt;-->
+                                <!--&lt;!&ndash;<field name="last_contact_time" class="oe_inline"/>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<button type="object" name="update_contact_time" string="更新" class="oe_inline"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--</group>-->
+                    <!--<field name="note"/>-->
+                  <!--</group>-->
+                  <!--<notebook>-->
+                    <!--<page string="联系人">-->
+                      <!--<field name="contact_ids">-->
+                        <!--<tree>-->
+                          <!--<field name="name"/>-->
+                          <!--<field name="email"/>-->
+                          <!--<field name="phone"/>-->
+                          <!--<field name="cellphone"/>-->
+                          <!--<field name="chuanzhen"/>-->
+                        <!--</tree>-->
+                      <!--</field>-->
+                    <!--</page>-->
+                    <!--&lt;!&ndash;<page string="意向产品">&ndash;&gt;-->
+                      <!--&lt;!&ndash;<field name="product_ids">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<tree>&ndash;&gt;-->
+                          <!--&lt;!&ndash;<field name="name"/>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</tree>&ndash;&gt;-->
+                      <!--&lt;!&ndash;</field>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</page>&ndash;&gt;-->
+                  <!--</notebook>-->
+                <!--</sheet>-->
+            <!--</form>-->
+        <!--</field>-->
+    <!--</record>-->
+
+  <!--任务——查看——客户-->
+  <record id="task_customer_form" model="ir.ui.view">
+        <field name="name">task_customer_form</field>
+        <field name="model">customer</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <header>
+                        <!--<field name="category_id" widget="statusbar" statusbar_visible="draft,confirmed,done"/>-->
+                        <!--<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>-->
+                    </header>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="view_sale_order" icon="fa-tasks">
+                            <field name="so_qty" widget="statinfo" string="销售订单" modifiers="{'readonly': true}"/>
+                        </button>
+                        <button string="客户跟踪记录" class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-tasks"/>
+                    </div>
+
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="name" string="公司名称"/>
+                        <h1>
+                            <field name="name" placeholder="公司名称"/>
+                        </h1>
+                    </div>
+
+                  <group>
+                    <group>
+                      <!--<field name="name"/>-->
+                      <field name="country_id"/>
+                      <field name="address"/>
+                      <field name="website"/>
+                        <field name="develop_person"/>
+                        <!--<field name="del_days"/>-->
+                    </group>
+                    <group>
+                      <field name="grade_id"/>
+                      <field name="origin_id"/>
+                      <field name="category_id"/>
+                      <field name="develop_time"/>
+                      <field name="last_contact_time"/>
+                        <!--<label for="last_contact_time"/>-->
+                            <!--<div >-->
+                                <!--<field name="last_contact_time" class="oe_inline"/>-->
+                                <!--<button type="object" name="update_contact_time" string="更新" class="oe_inline"/>-->
+                            <!--</div>-->
+                    </group>
+                    <field name="note"/>
+                  </group>
+                  <notebook>
+                    <page string="联系人">
+                      <field name="contact_ids">
                         <tree>
                           <field name="name"/>
+                          <field name="email"/>
+                          <field name="phone"/>
+                          <field name="cellphone"/>
+                          <field name="chuanzhen"/>
+                        </tree>
+                      </field>
+                    </page>
+                    <page string="交货提醒">
+                      <field name="so_remind_ids" domain="[('state','=','to_done')]">
+                        <tree editable="bottom">
+                            <field name="sale_order_id"/>
+                            <field name="jiaohuo_date"/>
+                            <field name="state"/>
+                            <button type="object" name="view_so" string="查看" class="oe_highlight"/>
+                            <button type="object" name="task_done" string="完成" class="oe_highlight"/>
                         </tree>
                       </field>
                     </page>
@@ -95,6 +258,20 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
+
+      <record id="customer_act_tree_ref" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="customer_tree"/>
+        <field name="act_window_id" ref="customer_act"/>
+      </record>
+
+      <record id="customer_act_form_ref" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="customer_form"/>
+        <field name="act_window_id" ref="customer_act"/>
+      </record>
 
   </data>
 </odoo>

@@ -7,3 +7,6 @@ from . import supplier
 from . import purchase_order
 from . import sale_order
 from . import customer_follow_record
+from . import task
+from . import configuration
+from . import quotation

@@ -5,12 +5,11 @@
       <field name="name">customer_follow_record_tree</field>
       <field name="model">customer.follow.record</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree default_order="time desc">
           <!--<field name="name"/>-->
           <field name="customer_id"/>
-          <field name="date"/>
-          <field name="question"/>
-          <field name="solution"/>
+          <field name="time"/>
+          <field name="content"/>
         </tree>
       </field>
     </record>
@@ -24,16 +23,15 @@
                 <sheet>
                   <group>
                     <group>
-                      <!--<field name="name"/>-->
                       <field name="customer_id"/>
                     </group>
                     <group>
-                      <field name="date"/>
+                      <field name="time"/>
                     </group>
-                    <field name="question"/>
-                    <field name="solution"/>
-                    <field name="note"/>
                   </group>
+                    <group string="跟进内容">
+                        <field name="content" nolabel="1"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -45,7 +43,12 @@
         <field name="model">customer.follow.record</field>
         <field name="arch" type="xml">
             <search>
-                <!--<field name="name"/>-->
+                <field name="customer_id"/>
+                <field name="content"/>
+                <group expand="1" string="分组">
+                    <filter string="客户" context="{'group_by':'customer_id'}"/>
+                    <filter string="跟进时间" context="{'group_by':'time'}"/>
+                </group>
             </search>
         </field>
     </record>

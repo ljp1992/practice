@@ -29,11 +29,18 @@
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="姓名" nolabel="1" required="1"/>
+                        </h1>
+                        <h3>
+                            <field name="position" placeholder="职位" nolabel="1"/>
+                        </h3>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="position"/>
-                            <field name="email"/>
+                            <field name="email" widget="email"/>
                             <field name="phone"/>
                             <field name="cellphone"/>
                             <field name="chuanzhen"/>
@@ -44,9 +51,21 @@
                             <field name="wechat"/>
                             <field name="qq"/>
                             <field name="other"/>
-                            <field name="note"/>
                         </group>
+                        <group>
+                            <!--<field name="customer_id" required="1"/>-->
+                            <field name="primary"/>
+                        </group>
+                        <!--<group string="时区">-->
+                            <!--<field name="time_zone"/>-->
+                            <!--<field name="now_time"/>-->
+                        <!--</group>-->
                     </group>
+                    <notebook>
+                        <page string="备注">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

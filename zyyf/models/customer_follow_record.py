@@ -6,8 +6,7 @@ class CustomerFollowRecord(models.Model):
     _rec_name = 'customer_id'
 
     # name = fields.Char(string=u'编号')
-    date = fields.Datetime(string=u'日期', default=fields.Datetime.now)
-    question = fields.Text(string=u'问题')
-    solution = fields.Text(string=u'解决办法')
-    note = fields.Text(string=u'备注')
-    customer_id = fields.Many2one('customer', string=u'客户')
+    time = fields.Datetime(string=u'跟进时间', default=fields.Datetime.now)
+    content = fields.Text(string=u'内容')
+    # note = fields.Text(string=u'备注')
+    customer_id = fields.Many2one('customer', string=u'客户', ondelete='cascade')

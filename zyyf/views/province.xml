@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+    <!-- 省 tree -->
+    <record model="ir.ui.view" id="province_tree">
+      <field name="name">province_tree</field>
+      <field name="model">province</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="country_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 省 form -->
+    <record id="province_form" model="ir.ui.view">
+        <field name="name">province_form</field>
+        <field name="model">province</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                  <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="country_id"/>
+                    </group>
+                    <field name="note"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--省 search-->
+    <record id="province_search" model="ir.ui.view">
+        <field name="name">province_search</field>
+        <field name="model">province</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!--省 action-->
+    <record id="province_act" model="ir.actions.act_window">
+        <field name="name">省/州</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">province</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+  </data>
+</odoo>

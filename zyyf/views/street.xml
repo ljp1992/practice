@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+    <!-- 街道 tree -->
+    <record model="ir.ui.view" id="street_tree">
+      <field name="name">street_tree</field>
+      <field name="model">street</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="city_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 街道 form -->
+    <record id="street_form" model="ir.ui.view">
+        <field name="name">street_form</field>
+        <field name="model">street</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                  <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="city_id"/>
+                    </group>
+                    <field name="note"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--街道 search-->
+    <record id="street_search" model="ir.ui.view">
+        <field name="name">street_search</field>
+        <field name="model">street</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!--街道 action-->
+    <record id="street_act" model="ir.actions.act_window">
+        <field name="name">街道</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">street</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+  </data>
+</odoo>

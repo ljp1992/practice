@@ -1,15 +1,64 @@
 <odoo>
   <data>
+      <!--<record model="ir.ui.view" id="customer_kanban_view">-->
+            <!--<field name="name">customer_kanban_view</field>-->
+            <!--<field name="model">customer</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<kanban class="o_res_partner_kanban">-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="website"/>-->
+                    <!--<field name="salesman_id"/>-->
+                    <!--<field name="image"/>-->
+                    <!--<field name="city_id"/>-->
+                    <!--<field name="country_id"/>-->
+                    <!--<templates>-->
+                        <!--<t t-name="kanban-box">-->
+                            <!--<div class="oe_kanban_global_click o_res_partner_kanban">-->
+                                <!--<div class="o_kanban_tags_section oe_kanban_partner_categories"/>-->
+                                <!--<div class="o_kanban_image">-->
+                                    <!--<t t-if="record.image.raw_value">-->
+                                        <!--<img t-att-src="kanban_image('customer', 'image', record.id.value)"/>-->
+                                    <!--</t>-->
+                                    <!--<t t-if="!record.image.raw_value">-->
+                                        <!--<img t-att-src='_s + "/base/static/src/img/avatar.png"'/>-->
+                                    <!--</t>-->
+                                <!--</div>-->
+                                <!--<div class="oe_kanban_details">-->
+                                    <!--<strong class="oe_partner_heading"><field name="name"/></strong>-->
+                                    <!--<div t-if="record.customer_state.raw_value">状态: <field name="customer_state"/></div>-->
+                                    <!--<div t-if="record.salesman_id.raw_value">当前负责人: <field name="salesman_id"/></div>-->
+                                    <!--<ul>-->
+                                        <!--<li t-if="!record.city_id.raw_value and record.country_id.raw_value"><field name="country_id"/></li>-->
+                                        <!--<li t-if="record.city_id.raw_value and record.country_id.raw_value"><field name="city_id"/>, <field name="country_id"/></li>-->
+                                    <!--</ul>-->
+                                    <!--<div class="oe_kanban_partner_links"/>-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        <!--</t>-->
+                    <!--</templates>-->
+                <!--</kanban>-->
+            <!--</field>-->
+        <!--</record>-->
+      
     <!-- customer tree -->
     <record model="ir.ui.view" id="customer_tree">
       <field name="name">customer_tree</field>
       <field name="model">customer</field>
+      <field eval="1" name="priority"/>
       <field name="arch" type="xml">
         <tree>
-          <field name="name"/>
-          <field name="country_id"/>
-          <field name="last_contact_time"/>
-          <field name="salesman_id"/>
+            <field name="name"/>
+            <field name="country_id"/>
+            <field name="website"/>
+            <field name="grade_id"/>
+            <field name="type_id"/>
+            <field name="origin_id"/>
+            <field name="customer_state"/>
+            <!--<field name="last_contact_time"/>-->
+            <!--<field name="next_contact_time"/>-->
+            <field name="develop_id"/>
+            <field name="salesman_id" groups="zyyf.manager"/>
         </tree>
       </field>
     </record>
@@ -22,213 +71,96 @@
             <form string="">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <!--<button class="oe_stat_button" type="object" name="view_sale_order" icon="fa-tasks">-->
-                            <!--<field name="so_qty" widget="statinfo" string="销售订单" modifiers="{'readonly': true}"/>-->
-                        <!--</button>-->
-                        <button string="客户跟踪记录" class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-tasks"/>
+                        <button class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-pencil-square-o">
+                            <field name="cfr_qty" widget="statinfo" string="客户跟进记录"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="view_quotation" icon="fa-usd">
+                            <field name="quotation_qty" widget="statinfo" string="报价单"/>
+                        </button>
                     </div>
-
+                    <!--<field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image_medium', 'size': [90, 90]}"/>-->
+                    <field name="image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
-                        <label class="oe_edit_only" for="name" string="公司名称"/>
+                        <!--<label class="oe_edit_only" for="name" />-->
                         <h1>
-                            <field name="name" placeholder="公司名称"/>
+                            <field name="name" placeholder="名称" nolabel="1" required="1"/>
                         </h1>
-                        <!--<group>-->
-                            <!--<field name="customer_state"/>-->
-                        <!--</group>-->
                     </div>
 
-                  <notebook>
-                    <page string="基本信息">
-                      <group>
+                    <group>
                         <group>
-                          <field name="country_id"/>
-                          <field name="address"/>
-                          <field name="website"/>
-                          <field name="last_contact_time"/>
-                          <field name="interval_days"/>
-                          <field name="develop_time"/>
+                            <!--<label for="country_id" string="地址"/>-->
+                            <!--<div class="o_address_format">-->
+                                <!--<field name="country_id" placeholder="国家" class="o_address_country"/>-->
+                                <!--<field name="address" placeholder="详细地址" class="o_address_street"/>-->
+                            <!--</div>-->
+                            <field name="country_id" placeholder="国家"/>
+                            <field name="address" placeholder="详细地址"/>
+                            <field name="website" widget="url" placeholder="www.xxx.com"/>
                         </group>
-                        <group>
-                          <field name="grade_id"/>
-                          <field name="origin_id"/>
-                          <field name="type_id"/>
-                          <field name="salesman_id" groups="zyyf.manager"/>
-                        </group>
-                        <field name="note"/>
-                      </group>
+                        <group string="">
 
-                      <field name="contact_ids">
-                        <tree>
-                          <field name="name"/>
-                          <field name="email"/>
-                          <field name="phone"/>
-                        </tree>
-                      </field>
-                    </page>
-                    <!--<page string="意向产品">-->
-                      <!--<field name="product_ids">-->
-                        <!--<tree>-->
-                          <!--<field name="name"/>-->
-                        <!--</tree>-->
-                      <!--</field>-->
-                    <!--</page>-->
-                  </notebook>
+                            <field name="last_contact_time" required="1"/>
+                            <field name="interval_days"/>
+                            <field name="next_contact_time"/>
+                        </group>
+                        <group string="">
+                            <field name="develop_time"/>
+                            <field name="develop_id"/>
+                            <field name="salesman_id" groups="zyyf.manager"/>
+                        </group>
+
+                        <group string="">
+                            <field name="grade_id"/>
+                            <field name="type_id"/>
+                            <field name="origin_id"/>
+                            <field name="customer_state"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="联系人">
+                            <field name="contacter_ids">
+                                <tree>
+                                    <field name="name" readonly="1"/>
+                                    <field name="email"/>
+                                    <field name="phone"/>
+                                    <field name="primary"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="标签">
+                            <field name="label_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <!--<field name="content"/>-->
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="备注">
+                            <field name="note"/>
+                        </page>
+                        <!--<page string="客户跟进记录">-->
+                            <!--<field name="cfr_ids">-->
+                                <!--<tree default_order="time desc">-->
+                                    <!--<field name="time"/>-->
+                                    <!--<field name="content"/>-->
+                                <!--</tree>-->
+                            <!--</field>-->
+                        <!--</page>-->
+                        <!--<page string="报价单">-->
+                            <!--<field name="so_ids">-->
+                                <!--<tree default_order="quotation_time desc">-->
+                                    <!--<field name="name"/>-->
+                                    <!--<field name="quotation_time"/>-->
+                                <!--</tree>-->
+                            <!--</field>-->
+                        <!--</page>-->
+
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
-
-    <!--<record id="customer_form" model="ir.ui.view">-->
-        <!--<field name="name">customer_form</field>-->
-        <!--<field name="model">customer</field>-->
-        <!--<field name="arch" type="xml">-->
-            <!--<form string="">-->
-                <!--<sheet>-->
-                    <!--<div class="oe_button_box" name="button_box">-->
-                        <!--<button class="oe_stat_button" type="object" name="view_sale_order" icon="fa-tasks">-->
-                            <!--<field name="so_qty" widget="statinfo" string="销售订单" modifiers="{'readonly': true}"/>-->
-                        <!--</button>-->
-                        <!--<button string="客户跟踪记录" class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-tasks"/>-->
-                    <!--</div>-->
-
-                    <!--<div class="oe_title">-->
-                        <!--<label class="oe_edit_only" for="name" string="公司名称"/>-->
-                        <!--<h1>-->
-                            <!--<field name="name" placeholder="公司名称"/>-->
-                        <!--</h1>-->
-                        <!--<group>-->
-                            <!--<field name="customer_state"/>-->
-                        <!--</group>-->
-                    <!--</div>-->
-
-                  <!--<group>-->
-                      <!--&lt;!&ndash;<group col="4" class="o_label_nowrap">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<separator colspan="4" string="其他"/>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<field name="product_ids"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</group>&ndash;&gt;-->
-                    <!--<group>-->
-                      <!--<field name="country_id"/>-->
-                      <!--<field name="address"/>-->
-                      <!--<field name="website"/>-->
-                        <!--<field name="develop_person"/>-->
-                        <!--&lt;!&ndash;<field name="del_days"/>&ndash;&gt;-->
-                    <!--</group>-->
-                    <!--<group>-->
-                      <!--<field name="grade_id"/>-->
-                      <!--<field name="origin_id"/>-->
-                      <!--<field name="category_id"/>-->
-                      <!--<field name="develop_time"/>-->
-                      <!--<field name="last_contact_time"/>-->
-                        <!--&lt;!&ndash;<label for="last_contact_time"/>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div >&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="last_contact_time" class="oe_inline"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<button type="object" name="update_contact_time" string="更新" class="oe_inline"/>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--</group>-->
-                    <!--<field name="note"/>-->
-                  <!--</group>-->
-                  <!--<notebook>-->
-                    <!--<page string="联系人">-->
-                      <!--<field name="contact_ids">-->
-                        <!--<tree>-->
-                          <!--<field name="name"/>-->
-                          <!--<field name="email"/>-->
-                          <!--<field name="phone"/>-->
-                          <!--<field name="cellphone"/>-->
-                          <!--<field name="chuanzhen"/>-->
-                        <!--</tree>-->
-                      <!--</field>-->
-                    <!--</page>-->
-                    <!--&lt;!&ndash;<page string="意向产品">&ndash;&gt;-->
-                      <!--&lt;!&ndash;<field name="product_ids">&ndash;&gt;-->
-                        <!--&lt;!&ndash;<tree>&ndash;&gt;-->
-                          <!--&lt;!&ndash;<field name="name"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</tree>&ndash;&gt;-->
-                      <!--&lt;!&ndash;</field>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</page>&ndash;&gt;-->
-                  <!--</notebook>-->
-                <!--</sheet>-->
-            <!--</form>-->
-        <!--</field>-->
-    <!--</record>-->
-
-  <!--任务——查看——客户-->
-  <!--<record id="task_customer_form" model="ir.ui.view">-->
-        <!--<field name="name">task_customer_form</field>-->
-        <!--<field name="model">customer</field>-->
-        <!--<field name="arch" type="xml">-->
-            <!--<form string="">-->
-                <!--<sheet>-->
-                    <!--<header>-->
-                        <!--&lt;!&ndash;<field name="category_id" widget="statusbar" statusbar_visible="draft,confirmed,done"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>&ndash;&gt;-->
-                    <!--</header>-->
-                    <!--<div class="oe_button_box" name="button_box">-->
-                        <!--<button class="oe_stat_button" type="object" name="view_sale_order" icon="fa-tasks">-->
-                            <!--<field name="so_qty" widget="statinfo" string="销售订单" modifiers="{'readonly': true}"/>-->
-                        <!--</button>-->
-                        <!--<button string="客户跟踪记录" class="oe_stat_button" type="object" name="view_customer_follow_record" icon="fa-tasks"/>-->
-                    <!--</div>-->
-
-                    <!--<div class="oe_title">-->
-                        <!--<label class="oe_edit_only" for="name" string="公司名称"/>-->
-                        <!--<h1>-->
-                            <!--<field name="name" placeholder="公司名称"/>-->
-                        <!--</h1>-->
-                    <!--</div>-->
-
-                  <!--<group>-->
-                    <!--<group>-->
-                      <!--&lt;!&ndash;<field name="name"/>&ndash;&gt;-->
-                      <!--<field name="country_id"/>-->
-                      <!--<field name="address"/>-->
-                      <!--<field name="website"/>-->
-                        <!--<field name="develop_person"/>-->
-                        <!--&lt;!&ndash;<field name="del_days"/>&ndash;&gt;-->
-                    <!--</group>-->
-                    <!--<group>-->
-                      <!--<field name="grade_id"/>-->
-                      <!--<field name="origin_id"/>-->
-                      <!--<field name="category_id"/>-->
-                      <!--<field name="develop_time"/>-->
-                      <!--<field name="last_contact_time"/>-->
-                        <!--&lt;!&ndash;<label for="last_contact_time"/>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div >&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="last_contact_time" class="oe_inline"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<button type="object" name="update_contact_time" string="更新" class="oe_inline"/>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--</group>-->
-                    <!--<field name="note"/>-->
-                  <!--</group>-->
-                  <!--<notebook>-->
-                    <!--<page string="联系人">-->
-                      <!--<field name="contact_ids">-->
-                        <!--<tree>-->
-                          <!--<field name="name"/>-->
-                          <!--<field name="email"/>-->
-                          <!--<field name="phone"/>-->
-                          <!--<field name="cellphone"/>-->
-                          <!--<field name="chuanzhen"/>-->
-                        <!--</tree>-->
-                      <!--</field>-->
-                    <!--</page>-->
-                    <!--<page string="交货提醒">-->
-                      <!--<field name="so_remind_ids" domain="[('state','=','to_done')]">-->
-                        <!--<tree editable="bottom">-->
-                            <!--<field name="sale_order_id"/>-->
-                            <!--<field name="jiaohuo_date"/>-->
-                            <!--<field name="state"/>-->
-                            <!--<button type="object" name="view_so" string="查看" class="oe_highlight"/>-->
-                            <!--<button type="object" name="task_done" string="完成" class="oe_highlight"/>-->
-                        <!--</tree>-->
-                      <!--</field>-->
-                    <!--</page>-->
-                  <!--</notebook>-->
-                <!--</sheet>-->
-            <!--</form>-->
-        <!--</field>-->
-    <!--</record>-->
 
     <!--customer search-->
     <record id="customer_search" model="ir.ui.view">
@@ -238,7 +170,26 @@
             <search>
                 <field name="name"/>
                 <field name="country_id"/>
+                <field name="website"/>
                 <field name="grade_id"/>
+                <field name="type_id"/>
+                <field name="origin_id"/>
+                <field name="customer_state"/>
+                <field name="develop_id"/>
+                <field name="salesman_id" groups="zyyf.manager"/>
+                <field name="contacter_name"/>
+                <field name="contacter_phone"/>
+                <field name="contacter_email"/>
+                <group expand="1" string="分组">
+                    <filter string="国家" context="{'group_by':'country_id'}"/>
+                    <filter string="级别" context="{'group_by':'grade_id'}"/>
+                    <filter string="类型" context="{'group_by':'type_id'}"/>
+                    <filter string="状态" context="{'group_by':'customer_state'}"/>
+                    <filter string="开发人" context="{'group_by':'develop_id'}"/>
+                    <filter string="负责人" context="{'group_by':'salesman_id'}" groups="zyyf.manager"/>
+                    <filter string="上次联系时间" context="{'group_by':'last_contact_time'}"/>
+                    <filter string="下次联系时间" context="{'group_by':'next_contact_time'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -250,21 +201,25 @@
         <field name="res_model">customer</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <!--<field name="view_mode">ljp_mode</field>-->
+        <field name="view_id" ref="customer_tree"/>
     </record>
 
-      <record id="customer_act_tree_ref" model="ir.actions.act_window.view">
-        <field name="sequence" eval="1"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="customer_tree"/>
-        <field name="act_window_id" ref="customer_act"/>
-      </record>
+       <!--customer tree view ref-->
+      <!--<record id="customer_act_tree_ref" model="ir.actions.act_window.view">-->
+        <!--<field name="sequence" eval="1"/>-->
+        <!--<field name="view_mode">ljp_mode</field>-->
+        <!--<field name="view_id" ref="customer_tree"/>-->
+        <!--<field name="act_window_id" ref="customer_act"/>-->
+      <!--</record>-->
+        <!--customer form view ref-->
+      <!--<record id="customer_act_form_ref" model="ir.actions.act_window.view">-->
+        <!--<field name="sequence" eval="5"/>-->
+        <!--<field name="view_mode">form</field>-->
+        <!--<field name="view_id" ref="customer_form"/>-->
+        <!--<field name="act_window_id" ref="customer_act"/>-->
+      <!--</record>-->
 
-      <record id="customer_act_form_ref" model="ir.actions.act_window.view">
-        <field name="sequence" eval="2"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="customer_form"/>
-        <field name="act_window_id" ref="customer_act"/>
-      </record>
 
   </data>
 </odoo>

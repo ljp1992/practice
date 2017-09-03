@@ -14,34 +14,47 @@
           <!--<menuitem name="采购" id="po_top_menu" parent="po_root_menu" sequence="1"/>-->
             <!--<menuitem name="采购单" id="po_menu" parent="po_top_menu" action="purchase_order_act" sequence="1"/>-->
 
-      <menuitem name="销售" id="so_root_menu" sequence="3"/>
-          <menuitem name="销售" id="so_top_menu" parent="so_root_menu" sequence="1"/>
-            <menuitem name="客户跟进记录" id="customer_follow_record_menu" parent="so_top_menu" action="customer_follow_record_act" sequence="1"/>
-            <!--<menuitem name="销售单" id="so_menu" parent="so_top_menu" action="sale_order_act" sequence="2"/>-->
+      <menuitem name="销售" id="so_root_menu" sequence="12"/>
+          <menuitem name="销售" id="so_top_menu" parent="so_root_menu" sequence="4"/>
+              <menuitem name="报价单" id="quotation_menu" parent="so_top_menu" action="sale_order_act" sequence="4"/>
 
-        <menuitem name="基础资料" id="base_menu" sequence="4"/>
-            <menuitem name="客户" id="customer_top_menu" parent="base_menu"  sequence="1"/>
-                <menuitem name="客户资料" id="customer_menu" parent="customer_top_menu" action="customer_act" sequence="1"/>
-                <!--<menuitem name="客户子信息" id="customer_subinfo_menu" parent="customer_top_menu"  sequence="2"/>-->
-                    <menuitem name="联系人" id="customer_contacter_menu" parent="customer_top_menu" action="customer_contacter_act" sequence="10"/>
-                    <menuitem name="客户等级" id="customer_grade_menu" parent="customer_top_menu" action="customer_grade_act" sequence="12"/>
-                    <menuitem name="客户类型" id="customer_category_menu" parent="customer_top_menu" action="customer_type_act" sequence="16"/>
-      <menuitem name="客户来源" id="customer_origin_menu" parent="customer_top_menu" action="customer_origin_act" sequence="18"/>
-                    <menuitem name="客户状态" id="customer_state_menu" parent="customer_top_menu" action="customer_state_act" sequence="20"/>
+      <menuitem name="客户" id="customer_root_menu" sequence="16"/>
+          <menuitem name="客户" id="customer_top_menu" parent="customer_root_menu"  sequence="1"/>
+              <menuitem name="客户资料" id="customer_menu" parent="customer_top_menu" action="customer_act" sequence="1"/>
+              <menuitem name="客户跟进记录" id="customer_follow_record_menu" parent="customer_top_menu" action="customer_follow_record_act" sequence="4"/>
+          <menuitem name="配置" id="customer_configuration_top_menu" parent="customer_root_menu"  sequence="4"/>
+              <menuitem name="设置" id="customer_configuration_menu" parent="customer_configuration_top_menu" action="customer_configuration_act" sequence="2"/>
+              <menuitem name="联系人" id="customer_contacter_parent_menu" parent="customer_configuration_top_menu" sequence="4"/>
+                  <!--<menuitem name="联系人" id="customer_contacter_menu" parent="customer_contacter_parent_menu" action="customer_contacter_act" sequence="4"/>-->
+                  <menuitem name="职位" id="customer_position_menu" parent="customer_contacter_parent_menu" action="position_act" sequence="6"/>
+                  <!--<menuitem name="称谓" id="custoer_call_menu" parent="customer_contacter_parent_menu" action="customer_call_act" sequence="8"/>-->
+              <!--<menuitem name="地址" id="address_parent_menu" parent="customer_configuration_top_menu" sequence="8"/>-->
+                  <menuitem name="国家" id="country_menu" parent="customer_configuration_top_menu" action="country_act" sequence="4"/>
+                  <!--<menuitem name="省/州" id="province_menu" parent="address_parent_menu" action="province_act" sequence="8"/>-->
+                  <!--<menuitem name="市" id="city_menu" parent="address_parent_menu" action="city_act" sequence="16"/>-->
+                  <!--<menuitem name="街道" id="street_menu" parent="address_parent_menu" action="street_act" sequence="20"/>-->
+              <menuitem name="级别" id="customer_grade_menu" parent="customer_configuration_top_menu" action="customer_grade_act" sequence="12"/>
+              <menuitem name="类型" id="customer_category_menu" parent="customer_configuration_top_menu" action="customer_type_act" sequence="16"/>
+              <menuitem name="来源" id="customer_origin_menu" parent="customer_configuration_top_menu" action="customer_origin_act" sequence="18"/>
+              <menuitem name="状态" id="customer_state_menu" parent="customer_configuration_top_menu" action="customer_state_act" sequence="20"/>
+              <menuitem name="标签" id="customer_label_menu" parent="customer_configuration_top_menu" action="customer_label_act" sequence="22"/>
+              <menuitem name="产品" id="product_menu" parent="customer_configuration_top_menu" action="product_act" sequence="24"/>
+              <menuitem name="excel模板" id="excel_template_menu" parent="customer_configuration_top_menu" action="excel_template_act" sequence="28"/>
 
-            <!--<menuitem name="供应商信息" id="supplier_top_menu" parent="base_menu" sequence="2"/>-->
+
+
+      <!--<menuitem name="供应商信息" id="supplier_top_menu" parent="base_menu" sequence="2"/>-->
               <!--<menuitem name="供应商资料" id="supplier_menu" parent="supplier_top_menu" action="supplier_act" sequence="1"/>-->
             <!---->
             <!--<menuitem name="产品信息" id="product_top_menu" parent="base_menu"  sequence="3"/>-->
-                <!--<menuitem name="产品" id="product_menu" parent="product_top_menu" action="product_act" sequence="1"/>-->
-            <menuitem name="其他信息" id="other_top_menu" parent="base_menu"  sequence="4"/>
-                <menuitem name="国家" id="country_menu" parent="other_top_menu" action="country_act" sequence="1"/>
-                <menuitem name="职位" id="position_menu" parent="other_top_menu" action="position_act" sequence="2"/>
+            <!--<menuitem name="其他信息" id="other_top_menu" parent="base_menu"  sequence="4"/>-->
+                <!--<menuitem name="国家" id="country_menu" parent="other_top_menu" action="country_act" sequence="1"/>-->
+                <!--<menuitem name="职位" id="position_menu" parent="other_top_menu" action="position_act" sequence="2"/>-->
             <!--<menuitem name="设置" id="configuration_top_menu" parent="base_menu"  sequence="5"/>-->
                 <!--<menuitem name="设置" id="configuration_menu" parent="configuration_top_menu" action="configuration_act" sequence="1"/>-->
   <!---->
 
-      <menuitem name="管理" id="management_menu" sequence="10" groups="zyyf.manager"/>
+      <menuitem name="管理" id="management_menu" sequence="20" groups="zyyf.manager"/>
           <menuitem name="用户" id="user_top_menu" parent="management_menu" sequence="1"/>
             <menuitem name="用户" id="res_users_menu" parent="user_top_menu" action="res_users_act" sequence="1"/>
             <!--<menuitem name="销售单" id="so_menu" parent="so_top_menu" action="sale_order_act" sequence="2"/>-->

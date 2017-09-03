@@ -6,9 +6,10 @@ class SaleOrder(models.Model):
     _name = 'sale.order'
 
     name = fields.Char(string=u'单号')#唯一 系统自动生成
-    customer_id = fields.Many2one('customer', string=u'客户')
-    confirm_date = fields.Datetime(string=u'确认日期', default=fields.Datetime.now)
-    jiaohuo_date = fields.Datetime(string=u'交货日期', default=fields.Datetime.now)
+    customer_id = fields.Many2one('customer', string=u'客户', ondelete='cascade')
+    quotation_time = fields.Datetime(string=u'报价时间', default=fields.Datetime.now)
+    # confirm_date = fields.Datetime(string=u'确认日期', default=fields.Datetime.now)
+    # jiaohuo_date = fields.Datetime(string=u'交货日期', default=fields.Datetime.now)
     state = fields.Selection(selection=[('draft',u'草稿'),
                                         ('confirmed', u'确认'),
                                         ('done', u'完成'),], default='draft', string=u'状态')
@@ -19,16 +20,16 @@ class SaleOrder(models.Model):
         if not vals.get('name'):
             vals['name'] = self.env['ir.sequence'].next_by_code('sale.order.code') or '/'
         return super(SaleOrder, self).create(vals)
-
-    @api.one
-    def confirm_order(self):
-        for record in self:
-            record .state = 'confirmed'
-
-    @api.one
-    def back_order(self):
-        for record in self:
-            record.state = 'draft'
+    #
+    # @api.one
+    # def confirm_order(self):
+    #     for record in self:
+    #         record .state = 'confirmed'
+    #
+    # @api.one
+    # def back_order(self):
+    #     for record in self:
+    #         record.state = 'draft'
 
 class SaleOrderLine(models.Model):
     _name = 'sale.order.line'

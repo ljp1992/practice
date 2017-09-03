@@ -6,8 +6,9 @@
       <field name="model">sale.order</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="name"/>
-          <field name="customer_id"/>
+            <field name="name"/>
+            <field name="customer_id"/>
+            <field name="quotation_time"/>
         </tree>
       </field>
     </record>
@@ -18,19 +19,18 @@
         <field name="model">sale.order</field>
         <field name="arch" type="xml">
             <form string="">
-                <header>
-                    <button type="object" name="confirm_order" string="确认" states="draft" class="oe_highlight"/>
-                    <button type="object" name="back_order" string="回退" states="confirmed" class="oe_highlight"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
-                </header>
+                <!--<header>-->
+                    <!--<button type="object" name="confirm_order" string="确认" states="draft" class="oe_highlight"/>-->
+                    <!--<button type="object" name="back_order" string="回退" states="confirmed" class="oe_highlight"/>-->
+                    <!--<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>-->
+                <!--</header>-->
                 <sheet>
                   <group>
                     <group>
-                      <field name="customer_id"/>
+                      <field name="customer_id" required="1"/>
                     </group>
                     <group>
-                      <field name="confirm_date"/>
-                      <field name="jiaohuo_date"/>
+                      <field name="quotation_time" required="1"/>
                     </group>
                   </group>
                   <notebook>
@@ -58,13 +58,17 @@
             <search>
                 <field name="name"/>
                 <field name="customer_id"/>
+                <group string="分组">
+                    <filter string="客户" context="{'group_by':'customer_id'}"/>
+                    <filter string="报价时间" context="{'group_by':'quotation_time'}"/>
+                </group>
             </search>
         </field>
     </record>
 
     <!--customer action-->
     <record id="sale_order_act" model="ir.actions.act_window">
-        <field name="name">销售单</field>
+        <field name="name">报价单</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">sale.order</field>
         <field name="view_type">form</field>

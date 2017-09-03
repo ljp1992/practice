@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+    <!-- 市 tree -->
+    <record model="ir.ui.view" id="city_tree">
+      <field name="name">city_tree</field>
+      <field name="model">city</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="province_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 市 form -->
+    <record id="city_form" model="ir.ui.view">
+        <field name="name">city_form</field>
+        <field name="model">city</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                  <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="province_id"/>
+                    </group>
+                    <field name="note"/>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--市 search-->
+    <record id="city_search" model="ir.ui.view">
+        <field name="name">city_search</field>
+        <field name="model">city</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!--市 action-->
+    <record id="city_act" model="ir.actions.act_window">
+        <field name="name">市</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">city</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+  </data>
+</odoo>

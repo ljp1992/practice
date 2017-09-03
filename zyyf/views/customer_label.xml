@@ -1,0 +1,54 @@
+<odoo>
+  <data>
+    <!-- 客户标签 tree -->
+    <record model="ir.ui.view" id="customer_label_tree">
+      <field name="name">customer_label_tree</field>
+      <field name="model">customer.label</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="content"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- 客户标签 form -->
+    <record id="customer_label_form" model="ir.ui.view">
+        <field name="name">customer_label_form</field>
+        <field name="model">customer.label</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group string="标签名">
+                        <field name="name" nolabel="1"/>
+                    </group>
+                    <group string="内容">
+                        <field name="content" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--客户标签 search-->
+    <record id="customer_label_search" model="ir.ui.view">
+        <field name="name">customer_label_search</field>
+        <field name="model">customer.label</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="content"/>
+            </search>
+        </field>
+    </record>
+
+    <!--客户标签 action-->
+    <record id="customer_label_act" model="ir.actions.act_window">
+        <field name="name">客户标签</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">customer.label</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+  </data>
+</odoo>

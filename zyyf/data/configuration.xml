@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="configuration_data" model="configuration">
+            <field name="name">配置</field>
+        </record>
+    </data>
+</odoo>

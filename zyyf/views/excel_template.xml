@@ -1,0 +1,58 @@
+<odoo>
+  <data>
+    <!-- excel 模板 tree -->
+    <record model="ir.ui.view" id="excel_template_tree">
+      <field name="name">excel_template_tree</field>
+      <field name="model">excel.template</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <!--<field name="template_file"/>-->
+        </tree>
+      </field>
+    </record>
+
+    <!-- excel 模板 form -->
+    <record id="excel_template_form" model="ir.ui.view">
+        <field name="name">excel_template_form</field>
+        <field name="model">excel.template</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <header>
+                        <!--<button string="下载模板(xlwt)" type="object" name="download_template_file_xlwt" class="oe_highlight"/>-->
+                    </header>
+                    <group >
+                        <field name="name" nolabel="1"/>
+                        <button string="下载模板" type="object" name="download_template_file" class="oe_highlight oe_inline"/>
+                    </group>
+                    <group >
+                        <field name="template_file" />
+                        <!--<button type="boject" name="download_template_file" class="oe_inline"/>-->
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--excel 模板 search-->
+    <record id="excel_template_search" model="ir.ui.view">
+        <field name="name">excel_template_search</field>
+        <field name="model">excel.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!--excel 模板 action-->
+    <record id="excel_template_act" model="ir.actions.act_window">
+        <field name="name">excel 模板</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">excel.template</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+  </data>
+</odoo>

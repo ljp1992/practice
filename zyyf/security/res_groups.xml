@@ -8,16 +8,31 @@
             <field name="name">经理</field>
         </record>
 
-        <!--业务员权限-->
+        <!--客户-->
         <record model="ir.rule" id="customer_rule">
             <field name="name">customer_rule</field>
             <field name="model_id" ref="model_customer"/>
             <field name="domain_force">[('salesman_id','=',user.id)]</field>
             <field name="groups" eval="[(4,ref('salesman'))]"/>
         </record>
+        <!--客户联系人-->
+        <record model="ir.rule" id="customer_contacter_rule">
+            <field name="name">customer_contacter_rule</field>
+            <field name="model_id" ref="model_customer_contacter"/>
+            <field name="domain_force">[('customer_id.salesman_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('salesman'))]"/>
+        </record>
+        <!--客户跟进记录-->
         <record model="ir.rule" id="customer_follow_record_rule">
             <field name="name">customer_follow_record_rule</field>
             <field name="model_id" ref="model_customer_follow_record"/>
+            <field name="domain_force">[('customer_id.salesman_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('salesman'))]"/>
+        </record>
+        <!--报价单-->
+        <record model="ir.rule" id="sale_order_rule">
+            <field name="name">sale_order_rule</field>
+            <field name="model_id" ref="model_sale_order"/>
             <field name="domain_force">[('customer_id.salesman_id','=',user.id)]</field>
             <field name="groups" eval="[(4,ref('salesman'))]"/>
         </record>

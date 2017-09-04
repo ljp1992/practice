@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <template id="load_js_ljp" name="load_js" inherit_id="web.assets_backend">
-      <xpath expr="." position="inside">
-        <script type="text/javascript" src='/download_stored_excel/static/src/js/download_excel.js'/>
-      </xpath>
-    </template>
-</odoo>

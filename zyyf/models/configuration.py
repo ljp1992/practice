@@ -7,6 +7,8 @@ class Configuration(models.Model):
     name = fields.Char(default=u'设置')
     customer_name_unique = fields.Boolean(u'客户名称唯一')
     customer_website_unique = fields.Boolean(u'网址唯一')
+    customer_country_required = fields.Boolean(u'国家必填')
+    customer_website_required = fields.Boolean(u'网址必填')
     import_customer_data = fields.Selection(selection=[('no_cover',u'若excel中的数据与系统原有数据发生冲突，则导出冲突数据'),
                                                         ('cover',u'若excel中的数据与系统原有数据发生冲突，则覆盖系统中的数据')],
                                              string=u'客户资料excel导入')

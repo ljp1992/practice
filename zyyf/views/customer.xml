@@ -47,7 +47,7 @@
       <field name="model">customer</field>
       <field eval="1" name="priority"/>
       <field name="arch" type="xml">
-        <tree>
+        <tree export="false">
             <field name="name"/>
             <field name="country_id"/>
             <field name="website"/>
@@ -201,24 +201,7 @@
         <field name="res_model">customer</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <!--<field name="view_mode">ljp_mode</field>-->
-        <field name="view_id" ref="customer_tree"/>
     </record>
-
-       <!--customer tree view ref-->
-      <!--<record id="customer_act_tree_ref" model="ir.actions.act_window.view">-->
-        <!--<field name="sequence" eval="1"/>-->
-        <!--<field name="view_mode">ljp_mode</field>-->
-        <!--<field name="view_id" ref="customer_tree"/>-->
-        <!--<field name="act_window_id" ref="customer_act"/>-->
-      <!--</record>-->
-        <!--customer form view ref-->
-      <!--<record id="customer_act_form_ref" model="ir.actions.act_window.view">-->
-        <!--<field name="sequence" eval="5"/>-->
-        <!--<field name="view_mode">form</field>-->
-        <!--<field name="view_id" ref="customer_form"/>-->
-        <!--<field name="act_window_id" ref="customer_act"/>-->
-      <!--</record>-->
 
 
   </data>

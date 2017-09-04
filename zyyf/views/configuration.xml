@@ -8,7 +8,9 @@
               <form create="false" delete="false" string="">
                   <group string="客户">
                       <field name="customer_name_unique"/>
+                      <field name="customer_country_required"/>
                       <field name="customer_website_unique"/>
+                      <field name="customer_website_required"/>
                       <field name="import_customer_data" widget="radio"/>
                   </group>
                   <group string="联系人">

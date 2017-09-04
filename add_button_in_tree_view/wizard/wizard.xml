@@ -8,7 +8,7 @@
             <form string="">
                 <div>
                     <b>注意：</b>
-                    <p>系统已存在的数据将会被覆盖</p>
+                    <!--<p>系统已存在的数据将会被覆盖</p>-->
                 </div>
                 <group>
                     <group>
@@ -17,7 +17,7 @@
                 </group>
                 <footer>
                     <button string="下载模板" name="download_template_file" type="object" class="btn-primary"/>
-                    <button string="导入" name="import_customer_excel" type="object" class="btn-primary"/>
+                    <button string="导入" name="import_excel" type="object" class="btn-primary"/>
                 </footer>
             </form>
         </field>

@@ -204,17 +204,24 @@ class ImportWizard(models.TransientModel):
 
     #导入客户资料excel
     def import_customer_excel(self):
+        return
         excel_data = self.read_excel_data()
         data = self.handle_excel_data(excel_data)
         self.create_customer_by_data(data)
 
     #下载模板文件
     def download_template_file(self):
-        # self.env['excel.template'].sudo().serach()
-        url = '/web/binary/download_document/?model=excel.template&field=template_file&id=%d&filename=%s' % (1, u'客户模板.xlsx')
+        model = 'excel.template'
+        field = 'template_file'
+        id = 1
+        filename = u'客户资料模板.xlsx'
         return {
-            'type': 'ir.actions.act_url',
-            'url': url,
-            'target': 'self',
+            'type': 'ir.actions.client',
+            'tag': 'download_excel_ljp',
+            'context': {'model': model,
+                        'field': field,
+                        'id': id,
+                        'filename': filename,
+                        }
         }
 

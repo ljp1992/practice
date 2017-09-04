@@ -1,5 +1,5 @@
 <templates>
     <t t-name="ImportView_ljp">
-        <h1>导入excel</h1>
+        <h1>success</h1>
     </t>
 </templates>

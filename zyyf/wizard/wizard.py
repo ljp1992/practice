@@ -10,184 +10,343 @@ class ImportWizard(models.TransientModel):
     name = fields.Char(default=u'导入excel', string=u'')
     data = fields.Binary(string=u'文件')
 
-    #检验工作表是否合法：表头是否正确；
-    def check_sheet_legal(self, sheet):
-        head = [u'客户名称',u'国家',u'详细地址',u'网址',u'开发时间',u'开发人',u'当前负责人',u'上次联系时间',u'间隔天数',u'下次联系时间',
-                u'级别',u'类型',u'来源',u'状态',u'备注',u'联系人姓名',u'Email',u'电话',u'手机',u'传真',u'skype',u'WhatsApp',
-                u'WeChat',u'QQ',u'其他联系方式',u'是否为主联系人',u'备注']
-        for i in range(len(head)):
-            val = sheet.cell(0, i).value
-            if head[i] != val:
-                info = u'工作表——%s，表头第%d列，应该为%s' % (sheet.name, i+1, head[i])
-                raise ValueError(info)
+    #导入客户资料excel
+    def import_customer_excel(self):
+        excel = self.get_excel_file()#获取导入的excel，若没有获取到，给出提示
+        self.get_right_excel_head()#正确的模板表头，以及各列对应的field,model,type,unique,required
+        self.check_import_excel_head(excel)#检查导入的excel，表头是否合法
+        excel_data = self.get_excel_data(excel)#获取excel数据
+        # print excel_data
+        self.check_excel_data(excel_data)
+        self.create_customer_by_data(excel_data)
 
-    #读取excel数据 顺便检查表头是否正确
-    #注意float类型数据
-    def read_excel_data(self):
-        if not self.data:
-            raise UserError(u'请先上传文件')
-        else:
+
+    #检查excel 各个sheet head是否合法
+    def check_import_excel_head(self, excel):
+        for i in range(len(excel.sheets())):
+            sheet = excel.sheet_by_index(i)
+            if sheet.nrows == 0:
+                continue
+            import_head = sheet.row_values(0)
+            if import_head[0] != u'客户名称':  # 表头第一列必须是客户名称
+                info = u'工作表-%s，表头第一列必须为-%s' % (sheet.name, u'客户名称')
+                raise UserError(info)
+            head_dic = {}
+            for i in range(len(import_head)):  # 有没有重复列
+                val = import_head[i]
+                if not val:
+                    continue
+                if head_dic.has_key(val):
+                    j = head_dic[val]['col']
+                    info = u'工作表-%s，表头第%d列与第%d列名称重复，都为-%s！' % (sheet.name, i + 1, j + 1, val)
+                    raise UserError(info)
+                else:
+                    head_dic[val] = ''
+            for (key, val) in head_dic.items():  # 检查该工作表的表头 各列是否存在
+                if not self.right_head.has_key(key):
+                    info = u'工作表-%s，表头第%d列-%s，模板中不存在该列！' % (sheet.name, val.get('col') + 1, key)
+                    raise UserError(info)
+            for (key, val) in self.right_head.items():  # 检查该工作表是否缺少某一列
+                if not head_dic.has_key(key):
+                    info = u'工作表-%s，表头缺少列-%s' % (sheet.name, key)
+                    raise UserError(info)
+
+    def get_customer_cols(self):
+        customer_cols = []
+        for (col, val) in self.sheet_col_info.items():
+            val = self.sheet_col_info[col]
+            if val['model'] == 'customer':
+                customer_cols.append(col)
+        customer_cols.sort()
+        return customer_cols
+
+    def get_contacter_cols(self):
+        contacter_cols = []
+        for (col, val) in self.sheet_col_info.items():
+            val = self.sheet_col_info[col]
+            if val['model'] == 'customer.contacter':
+                contacter_cols.append(col)
+        contacter_cols.sort()
+        return contacter_cols
+
+    def get_sheet_col_info(self, sheet):
+        self.sheet_col_info = {}
+        sheet_head = sheet.row_values(0)
+        for col in range(len(sheet_head)):
+            if sheet_head[col]:
+                if self.right_head.has_key(sheet_head[col]):
+                    val = self.right_head[sheet_head[col]]
+                    self.sheet_col_info[col] = {'head_name':sheet_head[col],
+                                               'field':val['field'],
+                                               'model':val['model'],
+                                               'type':val['type'],
+                                               'required':val['required'],
+                                               'unique':val['unique'],}
+
+    def get_contacter_name_col(self):
+        for (col, val) in self.sheet_col_info.items():
+            if val['model'] == 'customer.contacter' and val['field'] == 'name':
+                return col
+
+    #读取excel数据
+    def get_excel_data(self, excel):
+        excel_data = []
+        for i in range(len(excel.sheets())):
+            sheet = excel.sheet_by_index(i)
+            if sheet.nrows <= 1:
+                continue
+            if not sheet.cell(1, 0).value:
+                info = u'工作表—%s，第二行第一列缺少客户名称' % (sheet.name)
+                raise UserError(info)
+            self.get_sheet_col_info(sheet)#每列对应的信息
+            customer_cols = self.get_customer_cols()#客户是哪些列
+            contacter_cols = self.get_contacter_cols()#联系人是哪些列
+            contacter_name_col = self.get_contacter_name_col()#获取联系人姓名是哪一列
+            for row in range(1, sheet.nrows):
+                customer_name = self.handle_excel_cell_val(sheet, row, 0)
+                if customer_name:
+                    customer = {'row': row, 'sheet_name':sheet.name, 'contacter_ids': []}
+                    excel_data.append(customer)
+                    for col in customer_cols:
+                        customer.update(
+                            {self.sheet_col_info[col]['field']: self.handle_excel_cell_val(sheet, row, col)}
+                        )
+                contacter_name = self.handle_excel_cell_val(sheet, row, contacter_name_col)
+                if contacter_name:
+                    contacter = {'row': row, 'sheet_name':sheet.name,}
+                    for col in contacter_cols:
+                        contacter.update(
+                            {self.sheet_col_info[col]['field']: self.handle_excel_cell_val(sheet, row, col)}
+                        )
+                    customer['contacter_ids'].append(contacter)
+        return excel_data
+
+    #正确的模板表头内容
+    def get_right_excel_head(self):
+        head = {u'客户名称':{'field':'name','model':'customer'},
+                u'国家':{'field':'country_id','model':'customer'},
+                u'详细地址':{'field':'address','model':'customer'},
+                u'网址':{'field':'website','model':'customer'},
+                u'开发时间':{'field':'develop_time','model':'customer'},
+                u'开发人':{'field':'develop_id','model':'customer'},
+                u'当前负责人':{'field':'salesman_id','model':'customer'},
+                u'上次联系时间':{'field':'last_contact_time','model':'customer'},
+                u'间隔天数':{'field':'interval_days','model':'customer'},
+                u'下次联系时间':{'field':'next_contact_time','model':'customer'},
+                u'级别':{'field':'grade_id','model':'customer'},
+                u'类型':{'field':'type_id','model':'customer'},
+                u'来源':{'field':'origin_id','model':'customer'},
+                u'客户状态':{'field':'customer_state','model':'customer'},
+                u'客户备注':{'field':'note','model':'customer'},
+                u'联系人姓名':{'field':'name','model':'customer.contacter'},
+                u'是否为主联系人': {'field':'primary','model':'customer.contacter'},
+                u'Email':{'field':'email','model':'customer.contacter'},
+                u'电话':{'field':'phone','model':'customer.contacter'},
+                u'手机':{'field':'cellphone','model':'customer.contacter'},
+                u'传真':{'field':'chuanzhen','model':'customer.contacter'},
+                u'skype':{'field':'skype','model':'customer.contacter'},
+                u'WhatsApp':{'field':'whatsapp','model':'customer.contacter'},
+                u'WeChat':{'field':'wechat','model':'customer.contacter'},
+                u'QQ':{'field':'qq','model':'customer.contacter'},
+                u'其他联系方式':{'field':'other','model':'customer.contacter'},
+                u'联系人备注':{'field':'note','model':'customer.contacter'},
+        }
+        self.customer_fields = self.env['customer'].fields_get()
+        self.contacter_fields = self.env['customer.contacter'].fields_get()
+        config = self.env['configuration'].sudo().browse(1)
+        for (key, val) in head.items():#设置每列的 type unique required
+            field = val['field']
+            val['required'] = False
+            val['unique'] = False
+            val['vals'] = {}
+            if val['model'] == 'customer':
+                val['type'] = self.customer_fields[field]['type']
+                if val['field'] == 'name':
+                    val['required'] = True
+                    val['unique'] = True
+                elif val['field'] == 'country_id':
+                    if config.customer_country_required:
+                        val['required'] = True
+                elif val['field'] == 'website':
+                    if config.customer_website_required:
+                        val['required'] = True
+                    if config.customer_website_unique:
+                        val['unique'] = True
+            elif val['model'] == 'customer.contacter':
+                val['type'] = self.contacter_fields[field]['type']
+                if val['field'] == 'name':
+                    val['required'] = True
+                    val['unique'] = True
+                elif val['field'] == 'email':
+                    if config.contacter_email_unique:
+                        val['unique'] = True
+        self.right_head = head
+
+    def get_excel_file(self):
+        if self.data:
             try:
                 excel = xlrd.open_workbook(file_contents=base64.decodestring(self.data))
+                return excel
             except:
                 raise UserError(u'请上传正确的excel文件')
-            excel_data = []
-            for i in range(len(excel.sheets())):
-                sheet = excel.sheet_by_index(i)
-                self.check_sheet_legal(sheet)
-                if sheet.nrows <= 1:  #光有表头没有数据
-                    continue
-                if not sheet.cell(1, 0).value:
-                    info = u'工作表——%s，第二行第一列缺少客户名称' % (sheet.name)
-                    raise UserError(info)
-                for row in range(1, sheet.nrows):
-                    name = sheet.cell(row, 0).value
-                    if name:
-                        customer = {'row': row + 1,  # excel row
-                                    'name': sheet.cell(row, 0).value,
-                                    'country_id': sheet.cell(row, 1).value,
-                                    'address': sheet.cell(row, 2).value,
-                                    'website': sheet.cell(row, 3).value,
-                                    'develop_time': sheet.cell(row, 4).value,
-                                    'develop_id': sheet.cell(row, 5).value,
-                                    'salesman_id': sheet.cell(row, 6).value,
-                                    'last_contact_time': sheet.cell(row, 7).value,
-                                    'interval_days': sheet.cell(row, 8).value,
-                                    'next_contact_time': sheet.cell(row, 9).value,
-                                    'grade_id': sheet.cell(row, 10).value,
-                                    'type_id': sheet.cell(row, 11).value,
-                                    'origin_id': sheet.cell(row, 12).value,
-                                    'customer_state': sheet.cell(row, 13).value,
-                                    'note': sheet.cell(row, 14).value,
-                                    'contacter_ids': [],}
-                        excel_data.append(customer)
-                    contact_name = sheet.cell(row, 15).value
-                    if contact_name:
-                        contacter = {'row': row + 1,  # excel row
-                                     'name': contact_name,
-                                     'email': sheet.cell(row, 16).value,
-                                     'phone': sheet.cell(row, 17).value,
-                                     'cellphone': sheet.cell(row, 18).value,
-                                     'chuanzhen': sheet.cell(row, 19).value,
-                                     'skype': sheet.cell(row, 20).value,
-                                     'whatsapp': sheet.cell(row, 21).value,
-                                     'wechat': sheet.cell(row, 22).value,
-                                     'qq': sheet.cell(row, 23).value,
-                                     'other': sheet.cell(row, 24).value,
-                                     'primary': sheet.cell(row, 25).value,
-                                     'note': sheet.cell(row, 26).value,}
-                        customer['contacter_ids'].append(contacter)
-            return excel_data
+        else:
+            raise UserError(u'请先上传文件')
 
-    #解决excel 所有数字均为float类型的问题
-    def handle_data_type(self, model, data):
-        fields = self.env[model].fields_get()
-        for (field, val) in data.items():
-            if type(val) is float:
-                if fields.has_key(field):
-                    field_type = fields[field]['type']
-                    if field_type == 'int':
-                        data[field] = int(val)
-                    elif field_type != 'float':
-                        data[field] = str(int(val))
-        return data
 
-    #处理excel数据：开发时间为空，则设置为当前时间；格式化日期；
-    def handle_excel_data(self, data):
-        for m in range(len(data)):
-            data[m] = self.handle_data_type('customer', data[m])
-            for n in range(len(data[m]['contacter_ids'])):
-                data[m]['contacter_ids'][n] = self.handle_data_type('customer.contacter', data[m]['contacter_ids'][n])
-        customer_obj = self.env['customer']
-        contacter_obj = self.env['customer.contacter']
-        uesr_obj = self.env['res.users']
-        country_obj = self.env['country']
-        grade_obj = self.env['customer.grade']
-        type_obj = self.env['customer.type']
-        origin_obj = self.env['customer.origin']
-        state_obj = self.env['customer.state']
-        for vals in data:
-            if vals['country_id']:
-                countrys = country_obj.sudo().search([('name', '=', vals['country_id'])])
-                if countrys:
-                    vals['country_id'] = countrys[0].id
-                else:
-                    vals['country_id'] = country_obj.create({'name': vals['country_id']}).id
-            else:
-                vals['country_id'] = False
-            if vals['develop_time']:
-                vals['develop_time'] = vals['develop_time'].replace('/','-')
-            else:
-                vals['develop_time'] = datetime.datetime.now()
-            if vals['develop_id']:
-                users = uesr_obj.sudo().search([('name', '=', vals['develop_id'])])
-                if users:
-                    vals['develop_id'] = users[0].id
-                else:
-                    info = u'系统不存在用户——%s' % (vals['develop_id'])
-                    raise UserError(info)
-            else:
-                vals['develop_id'] = self.env.user.id
-            if vals['salesman_id']:
-                users = uesr_obj.sudo().search([('name', '=', vals['salesman_id'])])
-                if users:
-                    vals['salesman_id'] = users[0].id
-                else:
-                    info = u'系统不存在用户——%s' % (vals['salesman_id'])
-                    raise UserError(info)
-            else:
-                vals['salesman_id'] = self.env.user.id
-            if vals['last_contact_time']:
-                vals['last_contact_time'] = vals['last_contact_time'].replace('/', '-')
-            else:
-                vals['last_contact_time'] = datetime.datetime.now()
-            if not vals['interval_days']:
-                vals['interval_days'] = 0
-            if vals['next_contact_time']:
-                vals['next_contact_time'] = vals['next_contact_time'].replace('/', '-')
-            else:
-                vals['next_contact_time'] = datetime.datetime.now()
-            if vals['grade_id']:
-                results = grade_obj.sudo().search([('name', '=', vals['grade_id'])])
+    #如果是整数类型 excel中为float 则int()
+    def handle_excel_cell_val(self, sheet, row, col):
+        val = sheet.cell(row, col).value
+        if type(val) is not unicode:
+            info = u'工作表-%s，第%d行第%d列单元格格式不是文本类型，请设置整个excel的单元格格式为文本类型！' % (sheet.name, row+1, col+1)
+            raise ValueError(info)
+        head_name = self.sheet_col_info[col]['head_name']
+        field_type = self.sheet_col_info[col]['type']
+        model = self.sheet_col_info[col]['model']
+        field = self.sheet_col_info[col]['field']
+        if field_type in ['datetime', 'date']:
+            val = self.handle_datetime(sheet, row, col, val)
+            print field,val
+        elif field_type == 'many2one':
+            if not val:
+                return False
+            if model == 'customer':
+                relation_model = self.customer_fields.get(field).get('relation')
+                results = self.env[relation_model].sudo().search([('name','=',val)])
                 if results:
-                    vals['grade_id'] = results[0].id
+                    val = results[0].id
                 else:
-                    vals['grade_id'] = grade_obj.create({'name': vals['grade_id']}).id
-            else:
-                vals['grade_id'] = False
-            if vals['type_id']:
-                results = type_obj.sudo().search([('name', '=', vals['type_id'])])
-                if results:
-                    vals['type_id'] = results[0].id
-                else:
-                    vals['type_id'] = type_obj.create({'name': vals['type_id']}).id
-            else:
-                vals['type_id'] = False
-            if vals['origin_id']:
-                results = origin_obj.sudo().search([('name', '=', vals['origin_id'])])
-                if results:
-                    vals['origin_id'] = results[0].id
-                else:
-                    vals['origin_id'] = origin_obj.create({'name': vals['origin_id']}).id
-            else:
-                vals['origin_id'] = False
-            if vals['customer_state']:
-                results = state_obj.sudo().search([('name', '=', vals['customer_state'])])
-                if results:
-                    vals['customer_state'] = results[0].id
-                else:
-                    vals['customer_state'] = state_obj.create({'name': vals['customer_state']}).id
-            else:
-                vals['customer_state'] = False
-            if vals['contacter_ids']:
-                for j in range(len(vals['contacter_ids'])):
-                    contacter = vals['contacter_ids'][j]
-                    if contacter['primary'] == u'是':
-                        contacter['primary'] = True
+                    if field in ['develop_id','salesman_id']:
+                        info = u'工作表-%s，第%s行%s-%s，系统不存在该%s！' % (sheet.name, row+1, head_name, val, head_name)
+                        raise UserError(info)
                     else:
-                        contacter['primary'] = False
-                    vals['contacter_ids'][j] = contacter
-        return data
+                        val = self.env[relation_model].create({'name':val}).id
+        elif field_type == 'integer':
+            if not val:
+                return 0
+            try:
+                val = int(val)
+            except:
+                info = u'工作表-%s，第%s行%s-%s，不是数字！'  % (sheet.name, row, head_name, val)
+                raise UserError(info)
+        elif field_type == 'boolean':
+            if val == u'是':
+                val = True
+            elif val == '':
+                val = False
+            else:
+                info = u'工作表-%s，第%s行%s-%s，只能填是或不填！' % (sheet.name, row, head_name, val)
+                raise UserError(info)
+        return val
+
+    def get_contacter_fields_info(self):
+        contacter_fields_info = {}
+        for (head_name, val) in self.right_head.items():
+            if val['model'] == 'customer.contacter':
+                contacter_fields_info[val['field']] = {'head_name': head_name,
+                                                       'required': val['required'],
+                                                       'unique': val['unique'],
+                                                       'vals': {},}
+        return contacter_fields_info
+
+    def get_customer_fields_info(self):
+        customer_fields_info = {}
+        for (head_name, val) in self.right_head.items():
+            if val['model'] == 'customer':
+                customer_fields_info[val['field']] = {'head_name': head_name,
+                                                      'required': val['required'],
+                                                      'unique': val['unique'],
+                                                      'vals': {},}
+        return customer_fields_info
+
+    def check_excel_data(self, excel_data):
+        self.customer_fields_info = self.get_customer_fields_info()
+        self.contacter_fields_info = self.get_contacter_fields_info()
+        for customer in excel_data:
+            for (field, val) in customer.items():
+                if self.customer_fields_info.has_key(field):
+                    field_attr = self.customer_fields_info[field]
+                    if field_attr['required'] and not val:
+                        info = u'工作表-%s，第%s行%s不能为空！' % (customer['sheet_name'], customer['row']+1, field_attr['head_name'])
+                        raise UserError(info)
+                    if val and field_attr['unique']:
+                        if field_attr['vals'].has_key(val):
+                            info = u'工作表-%s，第%s行与第%s行%s重复！' % \
+                                   (customer['sheet_name'], field_attr['vals'][val], customer['row']+1, field_attr['head_name'])
+                            raise UserError(info)
+                        else:
+                            self.customer_fields_info[field]['vals'].update({val:customer['row']})
+                        results = self.env['customer'].sudo().search([(field,'=',val)])
+                        if results:
+                            info = u'工作表-%s，第%s行%s-%s，系统已存在！' % \
+                                   (customer['sheet_name'], customer['row']+1, field_attr['head_name'], val)
+                            raise UserError(info)
+            contacters = customer['contacter_ids']
+            primary_count = 0
+            for contacter in contacters:
+                for (field, val) in contacter.items():
+                    if field == 'primary' and val:
+                        print '+1'
+                        primary_count += 1
+                    if self.contacter_fields_info.has_key(field):
+                        field_attr = self.contacter_fields_info[field]
+                        if field_attr['required'] and not val:
+                            info = u'工作表-%s，第%s行%s不能为空！' % \
+                                   (contacter['sheet_name'], contacter['row'] + 1, field_attr['head_name'])
+                            raise UserError(info)
+                        if val and field_attr['unique']:
+                            if field_attr['vals'].has_key(val):
+                                info = u'工作表-%s，第%s行与第%s行%s重复！' % \
+                                       (contacter['sheet_name'], field_attr['vals'][val]+1, contacter['row'] + 1,
+                                        field_attr['head_name'])
+                                raise UserError(info)
+                            else:
+                                self.contacter_fields_info[field]['vals'].update({val:contacter['row']})
+                            results = self.env['customer.contacter'].sudo().search([(field,'=',val)])
+                            if results:
+                                info = u'工作表-%s，第%s行%s-%s，系统已存在！' % \
+                                       (contacter['sheet_name'], contacter['row']+1, field_attr['head_name'], val)
+                                raise UserError(info)
+
+            if contacters:
+                if primary_count == 0:
+                    info = u'工作表-%s，第%s行,没有为该客户设置主联系人' % \
+                           (customer['sheet_name'], customer['row']+1)
+                    raise UserError(info)
+                elif primary_count > 1:
+                    info = u'工作表-%s，第%s行,该客户设置了多个主联系人' % \
+                           (customer['sheet_name'], customer['row']+1)
+                    raise UserError(info)
+
+    # 处理日期字段
+    def handle_datetime(self, sheet, row, col, val):
+        if not val:
+            return False
+        result = False
+        temp = val.split(' ')
+        if len(temp) == 1:  # date
+            try:
+                result = datetime.datetime.strptime(val, '%Y-%m-%d')
+                result = result.strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                try:
+                    result = datetime.datetime.strptime(val, '%Y/%m/%d')
+                    result = result.strftime('%Y-%m-%d %H:%M:%S')
+                except:
+                    info = u'工作表-%s，第%s行第%s列，日期不合法！' % (sheet.name, row, col)
+                    raise ValueError(info)
+        elif len(temp) == 2:
+            try:
+                result = datetime.datetime.strptime(val, '%Y-%m-%d %H:%M:%S')
+            except:
+                try:
+                    result = datetime.datetime.strptime(val, '%Y/%m/%d %H:%M:%S')
+                except:
+                    info = u'工作表-%s，第%s行第%s列，日期不合法！' % (sheet.name, row, col)
+                    raise ValueError(info)
+        else:
+            info = u'工作表-%s，第%s行第%s列，日期不合法！' % (sheet.name, row, col)
+            raise ValueError(info)
+        return result
 
     # 创建客户
     def create_customer_by_data(self, data):
@@ -195,19 +354,17 @@ class ImportWizard(models.TransientModel):
         for customer in data:
             if customer.has_key('row'):
                 customer.pop('row')
+            if customer.has_key('sheet_name'):
+                customer.pop('sheet_name')
             for j in range(len(customer['contacter_ids'])):
                 contacter = customer['contacter_ids'][j]
                 if contacter.has_key('row'):
                     contacter.pop('row')
+                if contacter.has_key('sheet_name'):
+                    contacter.pop('sheet_name')
                 customer['contacter_ids'][j] = [0, False, contacter]
+            # print customer
             customer_obj.create(customer)
-
-    #导入客户资料excel
-    def import_customer_excel(self):
-        return
-        excel_data = self.read_excel_data()
-        data = self.handle_excel_data(excel_data)
-        self.create_customer_by_data(data)
 
     #下载模板文件
     def download_template_file(self):
@@ -224,4 +381,3 @@ class ImportWizard(models.TransientModel):
                         'filename': filename,
                         }
         }
-

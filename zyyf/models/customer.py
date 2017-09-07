@@ -90,7 +90,7 @@ class Customer(models.Model):
 
     @api.model
     def create(self, vals):
-        # print 'create customer', vals
+        print 'create customer', vals
         result = super(Customer, self).create(vals)
         self.check_customer_legal(result)
         return result
@@ -197,12 +197,12 @@ class CustomerContacter(models.Model):
             for contacter in contacters:
                 if contacter.primary:
                     primary_count += 1
-            if primary_count > 1:
-                info = u'客户——%s，存在多个主联系人' % (record.customer_id.name)
-                raise ValidationError(_(info))
-            elif primary_count == 0:
-                info = u'客户——%s，没有设置主联系人' % (record.customer_id.name)
-                raise ValidationError(_(info))
+            # if primary_count > 1:
+            #     info = u'客户——%s，存在多个主联系人' % (record.customer_id.name)
+            #     raise ValidationError(_(info))
+            # elif primary_count == 0:
+            #     info = u'客户——%s，没有设置主联系人' % (record.customer_id.name)
+            #     raise ValidationError(_(info))
             #end 一个客户只能有一个主联系人
             if config.contacter_name_unique and record.name:#姓名唯一
                 results = self.sudo().search([('name','=',record.name),('id','!=',record.id)])

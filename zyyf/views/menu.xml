@@ -23,13 +23,15 @@
               <menuitem name="客户资料" id="customer_menu" parent="customer_top_menu" action="customer_act" sequence="1"/>
               <menuitem name="客户跟进记录" id="customer_follow_record_menu" parent="customer_top_menu" action="customer_follow_record_act" sequence="4"/>
           <menuitem name="配置" id="customer_configuration_top_menu" parent="customer_root_menu"  sequence="4"/>
-              <menuitem name="设置" id="customer_configuration_menu" parent="customer_configuration_top_menu" action="customer_configuration_act" sequence="2"/>
-              <menuitem name="联系人" id="customer_contacter_parent_menu" parent="customer_configuration_top_menu" sequence="4"/>
-                  <!--<menuitem name="联系人" id="customer_contacter_menu" parent="customer_contacter_parent_menu" action="customer_contacter_act" sequence="4"/>-->
-                  <menuitem name="职位" id="customer_position_menu" parent="customer_contacter_parent_menu" action="position_act" sequence="6"/>
+              <menuitem name="设置" id="customer_configuration_parent_menu" parent="customer_configuration_top_menu" sequence="2"/>
+                  <menuitem name="客户设置" id="customer_config_menu" parent="customer_configuration_parent_menu" action="customer_configuration_act" sequence="4"/>
+                  <menuitem name="联系人设置" id="contacter_config_menu" parent="customer_configuration_parent_menu" action="contacter_configuration_act" sequence="8"/>
+              <!--<menuitem name="联系人" id="customer_contacter_parent_menu" parent="customer_configuration_top_menu" sequence="4"/>-->
+              <menuitem name="联系人" id="customer_contacter_menu" parent="customer_configuration_top_menu" action="customer_contacter_act" sequence="4"/>
+              <menuitem name="职位" id="customer_position_menu" parent="customer_configuration_top_menu" action="position_act" sequence="6"/>
                   <!--<menuitem name="称谓" id="custoer_call_menu" parent="customer_contacter_parent_menu" action="customer_call_act" sequence="8"/>-->
               <!--<menuitem name="地址" id="address_parent_menu" parent="customer_configuration_top_menu" sequence="8"/>-->
-                  <menuitem name="国家" id="country_menu" parent="customer_configuration_top_menu" action="country_act" sequence="4"/>
+              <menuitem name="国家" id="country_menu" parent="customer_configuration_top_menu" action="country_act" sequence="8"/>
                   <!--<menuitem name="省/州" id="province_menu" parent="address_parent_menu" action="province_act" sequence="8"/>-->
                   <!--<menuitem name="市" id="city_menu" parent="address_parent_menu" action="city_act" sequence="16"/>-->
                   <!--<menuitem name="街道" id="street_menu" parent="address_parent_menu" action="street_act" sequence="20"/>-->

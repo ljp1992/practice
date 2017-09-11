@@ -7,7 +7,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
-          <field name="position"/>
+          <field name="position_id"/>
           <field name="email"/>
           <field name="phone"/>
           <!--<field name="cellphone"/>-->
@@ -32,10 +32,10 @@
                     <field name="image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="姓名" nolabel="1" required="1"/>
+                            <field name="name" placeholder="姓名" nolabel="1"/>
                         </h1>
                         <h3>
-                            <field name="position" placeholder="职位" nolabel="1"/>
+                            <field name="position_id" placeholder="职位" nolabel="1"/>
                         </h3>
                     </div>
                     <group>
@@ -78,7 +78,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
-                <field name="position"/>
+                <field name="position_id"/>
             </search>
         </field>
     </record>

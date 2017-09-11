@@ -1,0 +1,209 @@
+<odoo>
+  <data>
+      <record id="contacter_configuration_form" model="ir.ui.view">
+          <field name="name">contacter_configuration_form</field>
+          <field name="model">contacter.configuration</field>
+          <field name="arch" type="xml">
+              <form create="false" delete="false" string="">
+                  <group string="">
+                      <label for="id" string="姓名"/>
+                      <div>
+                          <div>
+                              <field name="form_name_required" class="oe_inline"/>
+                              <label for="form_name_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_name_unique" class="oe_inline"/>
+                              <label for="form_name_unique" string="唯一"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="职位"/>
+                      <div>
+                          <div>
+                              <field name="form_position_id_required" class="oe_inline"/>
+                              <label for="form_position_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_position_id_invisible" class="oe_inline"/>
+                              <label for="tree_position_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="Email"/>
+                      <div>
+                          <div>
+                              <field name="form_email_required" class="oe_inline"/>
+                              <label for="form_email_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_email_unique" class="oe_inline"/>
+                              <label for="form_email_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_email_invisible" class="oe_inline"/>
+                              <label for="tree_email_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="电话"/>
+                      <div>
+                          <div>
+                              <field name="form_phone_required" class="oe_inline"/>
+                              <label for="form_phone_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_phone_unique" class="oe_inline"/>
+                              <label for="form_phone_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_phone_invisible" class="oe_inline"/>
+                              <label for="tree_phone_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="手机"/>
+                      <div>
+                          <div>
+                              <field name="form_cellphone_required" class="oe_inline"/>
+                              <label for="form_cellphone_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_cellphone_unique" class="oe_inline"/>
+                              <label for="form_cellphone_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_cellphone_invisible" class="oe_inline"/>
+                              <label for="tree_cellphone_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="传真"/>
+                      <div>
+                          <div>
+                              <field name="form_chuanzhen_required" class="oe_inline"/>
+                              <label for="form_chuanzhen_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_chuanzhen_unique" class="oe_inline"/>
+                              <label for="form_chuanzhen_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_chuanzhen_invisible" class="oe_inline"/>
+                              <label for="tree_chuanzhen_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="Skype"/>
+                      <div>
+                          <div>
+                              <field name="form_skype_required" class="oe_inline"/>
+                              <label for="form_skype_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_skype_unique" class="oe_inline"/>
+                              <label for="form_skype_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_skype_invisible" class="oe_inline"/>
+                              <label for="tree_skype_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="QQ"/>
+                      <div>
+                          <div>
+                              <field name="form_qq_required" class="oe_inline"/>
+                              <label for="form_qq_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_qq_unique" class="oe_inline"/>
+                              <label for="form_qq_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_qq_invisible" class="oe_inline"/>
+                              <label for="tree_qq_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="WeChat"/>
+                      <div>
+                          <div>
+                              <field name="form_wechat_required" class="oe_inline"/>
+                              <label for="form_wechat_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_wechat_unique" class="oe_inline"/>
+                              <label for="form_wechat_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_wechat_invisible" class="oe_inline"/>
+                              <label for="tree_wechat_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="WhatsApp"/>
+                      <div>
+                          <div>
+                              <field name="form_whatsapp_required" class="oe_inline"/>
+                              <label for="form_whatsapp_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_whatsapp_unique" class="oe_inline"/>
+                              <label for="form_whatsapp_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_whatsapp_invisible" class="oe_inline"/>
+                              <label for="tree_whatsapp_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="其他联系方式"/>
+                      <div>
+                          <div>
+                              <field name="form_phone_unique" class="oe_inline"/>
+                              <label for="form_phone_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_other_invisible" class="oe_inline"/>
+                              <label for="tree_other_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="备注"/>
+                      <div>
+                          <div>
+                              <field name="tree_note_invisible" class="oe_inline"/>
+                              <label for="tree_note_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  
+
+            </form>
+        </field>
+      </record>
+
+      <!--设置 action-->
+      <record id="contacter_configuration_act" model="ir.actions.act_window">
+          <field name="name">设置</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">contacter.configuration</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="res_id">1</field>
+      </record>
+
+  </data>
+</odoo>

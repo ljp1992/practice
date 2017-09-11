@@ -31,7 +31,8 @@
 
         'views/customer.xml',
         'views/customer_follow_record.xml',
-        'views/configuration.xml',
+        'views/customer_configuration.xml',
+        'views/contacter_config.xml',
         'views/customer_contacter.xml',
         'views/position.xml',
         'views/country.xml',

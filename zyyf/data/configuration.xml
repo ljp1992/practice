@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="configuration_data" model="configuration">
-            <field name="name">配置</field>
+        <record id="customer_configuration_data" model="customer.configuration">
+            <field name="title">客户</field>
+        </record>
+
+        <record id="contacter_configuration_data" model="contacter.configuration">
+            <field name="title">联系人</field>
         </record>
     </data>
 </odoo>

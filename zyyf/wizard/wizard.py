@@ -76,12 +76,12 @@ class ImportWizard(models.TransientModel):
             if sheet_head[col]:
                 if self.right_head.has_key(sheet_head[col]):
                     val = self.right_head[sheet_head[col]]
-                    self.sheet_col_info[col] = {'head_name':sheet_head[col],
-                                               'field':val['field'],
-                                               'model':val['model'],
-                                               'type':val['type'],
-                                               'required':val['required'],
-                                               'unique':val['unique'],}
+                    self.sheet_col_info[col] = {'head_name': sheet_head[col],
+                                                'field': val['field'],
+                                                'model': val['model'],
+                                                'type': val['type'],
+                                                'required': val['required'],
+                                                'unique': val['unique'],}
 
     def get_contacter_name_col(self):
         for (col, val) in self.sheet_col_info.items():

@@ -10,7 +10,7 @@ import json
 class Customer(models.Model):
     _name = 'customer'
 
-    name = fields.Char(string=u'名称')
+    name = fields.Char(string=u'客户名称')
     website = fields.Char(string=u'网址')
     develop_time = fields.Datetime(string=u'开发时间', default=fields.Datetime.now)
     last_contact_time = fields.Datetime(string=u'上次联系时间', default=fields.Datetime.now)
@@ -42,21 +42,62 @@ class Customer(models.Model):
     # street_id = fields.Many2one('street', string=u'街道')
     # category_id = fields.Many2one('customer.category', u'标签')
 
-    def cs(self, **kwargs):
-        print 1111111,kwargs
+    #设置form必填项
+    def set_form_field_required(self, doc):
+        required_fields = self.env['customer.configuration'].get_required_fields()
+        for field in required_fields:
+            xpath_val = "//field[@name='%s']" % (field)
+            for node in doc.xpath(xpath_val):
+                # node.set('required', '1')
+                modifiers = json.loads(node.get("modifiers"))
+                modifiers['required'] = True
+                node.set("modifiers", json.dumps(modifiers))
 
-    #根据权限组设置字段 是否显示 是否只读
+    #隐藏form视图字段
+    def set_form_field_invisible(self, doc):
+        invisible_fields = self.env['customer.configuration'].get_form_invisible_fields()
+        for field in invisible_fields:
+            xpath_val = "//field[@name='%s']" % (field)
+            for node in doc.xpath(xpath_val):
+                modifiers = json.loads(node.get("modifiers"))
+                modifiers['invisible'] = True
+                node.set("modifiers", json.dumps(modifiers))
+
+    #隐藏tree视图字段
+    def set_tree_field_invisible(self, doc):
+        invisible_fields = self.env['customer.configuration'].get_tree_invisible_fields()
+        for field in invisible_fields:
+            print field
+            xpath_val = "//field[@name='%s']" % (field)
+            for node in doc.xpath(xpath_val):
+                modifiers = json.loads(node.get("modifiers"))
+                modifiers['tree_invisible'] = True
+                node.set("modifiers", json.dumps(modifiers))
+
+    #设置其他情况
+    def set_other_field_attr(self, doc):
+        invisible_fields = self.env['customer.configuration'].get_form_invisible_fields()
+        if 'develop_id' not in invisible_fields:
+            if self.user_has_groups('zyyf.salesman'):  # 该权限组对该字段只有读权限
+                for node in doc.xpath("//field[@name='develop_id']"):
+                    node.set('readonly', '1')
+                    modifiers = json.loads(node.get("modifiers"))
+                    modifiers['readonly'] = True
+                    node.set("modifiers", json.dumps(modifiers))
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(Customer, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        if view_type == 'form' and self.user_has_groups('zyyf.salesman'):
-            doc = etree.XML(res['arch'])
-            for node in doc.xpath("//field[@name='develop_id']"):
-                node.set('readonly', '1')
-                modifiers = json.loads(node.get("modifiers"))
-                modifiers['readonly'] = True
-                node.set("modifiers", json.dumps(modifiers))
-            res['arch'] = etree.tostring(doc)
+        doc = etree.XML(res['arch'])
+        # print view_id,view_type,toolbar,submenu
+        if view_type == 'form':
+            self.set_form_field_required(doc)#设置form必填项
+            self.set_form_field_invisible(doc)
+            self.set_other_field_attr(doc)
+        elif view_type == 'tree':
+            # print res['arch']
+            self.set_tree_field_invisible(doc)
+        res['arch'] = etree.tostring(doc)
         return res
 
     # 计算下次联系时间
@@ -72,34 +113,43 @@ class Customer(models.Model):
                     last_contact_time = datetime.datetime.strptime(last_contact_time, '%Y-%m-%d %H:%M:%S')
                     record.next_contact_time = last_contact_time + datetime.timedelta(days=interval_days)
 
-    #根据配置，校验客户是否合法 如：客户名称、网址唯一
-    def check_customer_legal(self, records):
-        config = self.env['configuration'].sudo().browse(1)
+    # unique检查
+    def check_unique(self, records):
+        unique_fields = self.env['customer.configuration'].get_unique_fields()
+        fields_info = self.fields_get()
         for record in records:
-            if config.customer_name_unique and record.name:#客户名称唯一
-                results = self.sudo().search([('name','=',record.name),('id','!=',record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在客户名称——%s，该客户当前负责人为——%s' % (results[0].name, results[0].salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.customer_website_unique and record.website:#网址唯一
-                results = self.sudo().search([('website', '=', record.website), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在网址——%s，该网址所属客户为——%s，该客户当前负责人为——%s' % \
-                           (results[0].website, results[0].name, results[0].salesman_id.name)
-                    raise ValidationError(_(info))
+            for field in unique_fields:
+                val = record.read([field])[0][field]
+                if not val:
+                    continue
+                results = self.sudo().search([(field,'=',val),('id','!=',record.id)])
+                if results:
+                    info = u'%s-%s，系统已存在' % (fields_info.get(field).get('string'), val)
+                    raise UserError(info)
+
+    #检查其他限制条件
+    def check_other_restriction(self, records):
+        config = self.env['customer.configuration'].sudo().browse(1)
+        for record in records:
+            if config.form_contacter_required:
+                if not record.contacter_ids:
+                    info = u'客户-%s，联系人不能为空！' % (record.name)
+                    raise UserError(info)
 
     @api.model
     def create(self, vals):
-        print 'create customer', vals
+        # print 'create customer', vals
         result = super(Customer, self).create(vals)
-        self.check_customer_legal(result)
+        self.check_unique(result)#unique检查
+        self.check_other_restriction(result)
         return result
 
     @api.multi
     def write(self, vals):
         # print 'write customer', vals
         result = super(Customer, self).write(vals)
-        self.check_customer_legal(self)
+        self.check_unique(self)#unique检查
+        self.check_other_restriction(self)
         return result
 
     # 获取报价单数
@@ -144,164 +194,8 @@ class Customer(models.Model):
     #     result = super(Customer, self).unlink()
     #     return result
 
-    #点击删除图标时 不删除联系人 只是customer_id置为False
-    # def delete_contacter(self, vals):
-    #     if vals.get('contacter_ids'):
-    #         del_contacter_ids = []
-    #         i = 0
-    #         while True:
-    #             if i >= len(vals.get('contacter_ids')):
-    #                 break
-    #             if vals.get('contacter_ids')[i][0] == 2:
-    #                 del_contacter_ids.append(vals.get('contacter_ids')[i][1])
-    #                 del vals.get('contacter_ids')[i]
-    #             else:
-    #                 i += 1
-    #         for id in del_contacter_ids:
-    #             self.env['customer.contacter'].browse(id).customer_id = False
-    #     return vals
 
 
-
-
-
-#客户联系人
-class CustomerContacter(models.Model):
-    _name = 'customer.contacter'
-    _order = 'primary desc'
-
-    name = fields.Char(string=u'姓名')
-    email = fields.Char(string=u'邮箱')
-    phone = fields.Char(string=u'电话', default='+')
-    cellphone = fields.Char(string=u'手机', default='+')
-    chuanzhen = fields.Char(string=u'传真')
-    skype = fields.Char(string=u'skype')
-    qq = fields.Char(string=u'QQ')
-    wechat = fields.Char(string=u'WeChat')
-    whatsapp = fields.Char(string=u'WhatsApp')
-    other = fields.Char(string=u'其他联系方式')
-    note = fields.Text(string=u'备注')
-    primary = fields.Boolean(string=u'主联系人', default=True)
-    image = fields.Binary("Image", attachment=True, help=u"照片不能超过1024*1024px")
-
-    position = fields.Many2one('position', string=u'职位')
-    customer_id = fields.Many2one('customer', string=u'客户', ondelete='cascade')
-
-    #根据配置信息 检查联系人是否合法。如：姓名、邮箱是否唯一
-    def check_contacter_legal(self, records):
-        config = self.env['configuration'].sudo().browse(1)
-        for record in records:
-            #begin 一个客户只能有一个主联系人
-            contacters = record.customer_id.contacter_ids
-            primary_count = 0
-            for contacter in contacters:
-                if contacter.primary:
-                    primary_count += 1
-            # if primary_count > 1:
-            #     info = u'客户——%s，存在多个主联系人' % (record.customer_id.name)
-            #     raise ValidationError(_(info))
-            # elif primary_count == 0:
-            #     info = u'客户——%s，没有设置主联系人' % (record.customer_id.name)
-            #     raise ValidationError(_(info))
-            #end 一个客户只能有一个主联系人
-            if config.contacter_name_unique and record.name:#姓名唯一
-                results = self.sudo().search([('name','=',record.name),('id','!=',record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在联系人——%s，且该联系人当前负责人为——%s' % (results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_email_unique and record.email:#email唯一
-                results = self.sudo().search([('email', '=', record.email), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在邮箱——%s，该邮箱所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].email, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_phone_unique and record.phone not in ['','+']:
-                results = self.sudo().search([('phone', '=', record.phone), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在电话——%s，该电话所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].phone, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_cellphone_unique and record.cellphone not in ['','+']:
-                results = self.sudo().search([('cellphone', '=', record.cellphone), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在手机号——%s，该手机号所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].cellphone, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_chuanzhen_unique and record.chuanzhen:
-                results = self.sudo().search([('chuanzhen', '=', record.chuanzhen), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在传真——%s，该传真所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].chuanzhen, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_skype_unique and record.skype:
-                results = self.sudo().search([('skype', '=', record.skype), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在skype——%s，该skype所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].skype, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_whatsapp_unique and record.whatsapp:
-                results = self.sudo().search([('whatsapp', '=', record.whatsapp), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在whatsapp——%s，该whatsapp所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].whatsapp, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_wechat_unique and record.wechat:
-                results = self.sudo().search([('wechat', '=', record.wechat), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在wechat——%s，该wechat所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].wechat, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_qq_unique and record.qq:
-                results = self.sudo().search([('qq', '=', record.qq), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'系统中已存在qq——%s，该qq所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].qq, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-            if config.contacter_other_unique and record.other:
-                results = self.sudo().search([('other', '=', record.other), ('id', '!=', record.id)])
-                if results and len(results) >= 1:
-                    info = u'字段其他联系方式——%s，系统已存在，该联系方式所属联系人为——%s，该联系人的当前负责人为——%s' % \
-                           (results[0].other, results[0].name, results[0].customer_id.salesman_id.name)
-                    raise ValidationError(_(info))
-
-
-    @api.model
-    def create(self, vals):
-        result = super(CustomerContacter, self).create(vals)
-        # print 'create CustomerContacter', vals, result
-        self.check_contacter_legal(result)
-        return result
-
-    @api.multi
-    def write(self, vals):
-        # print 'write CustomerContacter', vals
-        result = super(CustomerContacter, self).write(vals)
-        self.check_contacter_legal(self)
-        return result
-
-    #
-    # @api.one
-    # def _get_customer_id(self):
-    #     for record in self:
-    #         cus_con_rel_ids = record.customer_contact_rel_ids
-    #         if cus_con_rel_ids:
-    #             if len(cus_con_rel_ids) == 1:
-    #                 record.customer_id = cus_con_rel_ids[0].customer_id.id
-    #             elif len(cus_con_rel_ids) > 1:
-    #                 info = u'该联系人对应多个客户！'
-    #                 raise ValidationError(_(info))
-
-    #获取联系人当地时间
-    # @api.one
-    # @api.depends('time_zone')
-    # def _get_now_time(self):
-    #     for record in self:
-    #         del_hour = record.time_zone
-    #         if del_hour:
-    #             del_hour = int(del_hour) - 8#浏览器会再加8h
-    #             record.now_time = datetime.datetime.now() + datetime.timedelta(hours=del_hour)
-    #         else:
-    #             record.now_time = datetime.datetime.now()
 
 #来源
 class CustomerOrigin(models.Model):

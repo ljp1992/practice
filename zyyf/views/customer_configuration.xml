@@ -1,0 +1,249 @@
+<odoo>
+  <data>
+      <!-- 设置 form -->
+      <!--<record id="customer_configuration_form" model="ir.ui.view">-->
+          <!--<field name="name">customer_configuration_form</field>-->
+          <!--<field name="model">customer.configuration</field>-->
+          <!--<field name="arch" type="xml">-->
+              <!--<form create="false" delete="false" string="">-->
+                  <!--<group string="客户">-->
+                      <!--<field name="name"/>-->
+                      <!--<field name="country_id"/>-->
+                      <!--<field name="address"/>-->
+                      <!--<field name="website"/>-->
+                      <!--<field name="develop_time"/>-->
+                      <!--<field name="develop_id"/>-->
+                      <!--<field name="salesman_id"/>-->
+                      <!--<field name="last_contact_time"/>-->
+                      <!--<field name="interval_days"/>-->
+                      <!--<field name="next_contact_time"/>-->
+                      <!--<field name="grade_id"/>-->
+                      <!--<field name="type_id"/>-->
+                      <!--<field name="origin_id"/>-->
+                      <!--<field name="customer_state"/>-->
+                  <!--</group>-->
+            <!--</form>-->
+        <!--</field>-->
+      <!--</record>-->
+
+      <record id="customer_configuration_form" model="ir.ui.view">
+          <field name="name">customer_configuration_form</field>
+          <field name="model">customer.configuration</field>
+          <field name="arch" type="xml">
+              <form create="false" delete="false" string="">
+                  <group string="">
+                      <label for="id" string="客户名称"/>
+                      <div>
+                          <div>
+                              <field name="form_name_required" class="oe_inline"/>
+                              <label for="form_name_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_name_unique" class="oe_inline"/>
+                              <label for="form_name_unique" string="唯一"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="国家"/>
+                      <div>
+                          <div>
+                              <field name="form_country_id_required" class="oe_inline"/>
+                              <label for="form_country_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_country_id_invisible" class="oe_inline"/>
+                              <label for="tree_country_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="详细地址"/>
+                      <div>
+                          <div>
+                              <field name="form_address_required" class="oe_inline"/>
+                              <label for="form_address_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_address_invisible" class="oe_inline"/>
+                              <label for="tree_address_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="网址"/>
+                      <div>
+                          <div>
+                              <field name="form_website_required" class="oe_inline"/>
+                              <label for="form_website_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="form_website_unique" class="oe_inline"/>
+                              <label for="form_website_unique" string="唯一"/>
+                          </div>
+                          <div>
+                              <field name="tree_website_invisible" class="oe_inline"/>
+                              <label for="tree_website_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="开发时间"/>
+                      <div>
+                          <div>
+                              <field name="form_develop_time_required" class="oe_inline"/>
+                              <label for="form_develop_time_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_develop_time_invisible" class="oe_inline"/>
+                              <label for="tree_develop_time_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="开发人"/>
+                      <div>
+                          <div>
+                              <field name="form_develop_id_invisible" class="oe_inline"/>
+                              <label for="form_develop_id_invisible" string="在表单视图中隐藏"/>
+                          </div>
+                          <div attrs="{'invisible':[('form_develop_id_invisible','=',True)]}">
+                              <field name="form_develop_id_required" class="oe_inline"/>
+                              <label for="form_develop_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_develop_id_invisible" class="oe_inline"/>
+                              <label for="tree_develop_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="当前负责人"/>
+                      <div>
+                          <div>
+                              <field name="form_salesman_id_required" class="oe_inline"/>
+                              <label for="form_salesman_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_salesman_id_invisible" class="oe_inline"/>
+                              <label for="tree_salesman_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="上次联系时间"/>
+                      <div>
+                          <div>
+                              <field name="form_last_contact_time_required" class="oe_inline"/>
+                              <label for="form_last_contact_time_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_last_contact_time_invisible" class="oe_inline"/>
+                              <label for="tree_last_contact_time_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="间隔天数"/>
+                      <div>
+                          <div>
+                              <field name="form_interval_days_required" class="oe_inline"/>
+                              <label for="form_interval_days_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_interval_days_invisible" class="oe_inline"/>
+                              <label for="tree_interval_days_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="下次联系时间"/>
+                      <div>
+                          <div>
+                              <field name="form_next_contact_time_required" class="oe_inline"/>
+                              <label for="form_next_contact_time_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_next_contact_time_invisible" class="oe_inline"/>
+                              <label for="tree_next_contact_time_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="级别"/>
+                      <div>
+                          <div>
+                              <field name="form_grade_id_required" class="oe_inline"/>
+                              <label for="form_grade_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_grade_id_invisible" class="oe_inline"/>
+                              <label for="tree_grade_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="类型"/>
+                      <div>
+                          <div>
+                              <field name="form_type_id_required" class="oe_inline"/>
+                              <label for="form_type_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_type_id_invisible" class="oe_inline"/>
+                              <label for="tree_type_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="来源"/>
+                      <div>
+                          <div>
+                              <field name="form_origin_id_required" class="oe_inline"/>
+                              <label for="form_origin_id_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_origin_id_invisible" class="oe_inline"/>
+                              <label for="tree_origin_id_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="状态"/>
+                      <div>
+                          <div>
+                              <field name="form_customer_state_required" class="oe_inline"/>
+                              <label for="form_customer_state_required" string="必填"/>
+                          </div>
+                          <div>
+                              <field name="tree_customer_state_invisible" class="oe_inline"/>
+                              <label for="tree_customer_state_invisible" string="在列表视图中隐藏"/>
+                          </div>
+                      </div>
+                  </group>
+                  <group>
+                      <label for="id" string="联系人"/>
+                      <div>
+                          <div>
+                              <field name="form_contacter_required" class="oe_inline"/>
+                              <label for="form_contacter_required" string="联系人不能为空"/>
+                          </div>
+                      </div>
+                  </group>
+
+            </form>
+        </field>
+      </record>
+
+      <!--设置 action-->
+      <record id="customer_configuration_act" model="ir.actions.act_window">
+          <field name="name">设置</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">customer.configuration</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="res_id">1</field>
+      </record>
+
+  </data>
+</odoo>
